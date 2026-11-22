@@ -2646,6 +2646,8 @@ function renderMenu(){
   setTitle('Biologija 2 · videopredavanja');
   var d=daysLeft();
   var h='<h2>Videopredavanja – 2. kolokvij</h2><p class="muted">'+(d>0?'📅 Do kolokvija (26. 11. 2026.): <b>'+d+' '+(d%10===1&&d%100!==11?'dan':'dana')+'</b>':(d===0?'📅 Kolokvij je <b>danas</b> – sretno! 🍀':'Kolokvij je prošao.'))+'</p>';
+  var ib=state.quiz.ispit;
+  h+='<a class="card lec" href="#ispit" style="border-color:var(--accent)"><div class="num">🎯</div><div style="flex:1;min-width:0"><b>Probni ispit</b><div class="muted" style="font-size:15px">'+EXAM.length+' pitanja · format kolokvija (1 i 2 točna)'+(ib?' · najbolje '+ib.best+'/'+EXAM.length:'')+'</div></div></a>';
   LECTURES.forEach(function(L){
     if(L.scenes){
       var n=L.scenes.length, dn=0; for(var i=0;i<n;i++) if(isDone(L,i)) dn++;
@@ -2954,10 +2956,222 @@ function wireAsk(){
   };
 }
 
+
+/* ================= PROBNI ISPIT ================= */
+var EXAM = [
+ /* UPUTA I – jedan točan */
+ {lec:'p12', text:'Profaza I traje otprilike…', opts:[
+  {t:'90 % vremena cijele mejoze', ok:true, why:'Točno – u njoj su sparivanje i rekombinacija.'},
+  {t:'5 % vremena mejoze', why:'~5 % je udio diobe u cijelom staničnom ciklusu.'},
+  {t:'95 % vremena mejoze', why:'~95 % je udio interfaze u staničnom ciklusu.'},
+  {t:'50 % vremena mejoze', why:'Skripta navodi oko 90 %.'}]},
+ {lec:'p12', text:'Crossing-over između X i Y kromosoma ograničen je na…', opts:[
+  {t:'gen SRY', why:'SRY prelazi na X kad se crossing-over dogodi IZVAN PAR-a.'},
+  {t:'pseudoautosomalne regije (PAR)', ok:true, why:'Točno.'},
+  {t:'centromere', why:'Ne – X i Y su homologni samo u PAR regijama.'},
+  {t:'cijelu duljinu kromosoma', why:'X i Y su samo djelomično homologni.'}]},
+ {lec:'p13', text:'Inicijatorska kaspaza ekstrinzičkog puta je…', opts:[
+  {t:'kaspaza-9', why:'Kaspaza-9 je inicijatorska u intrinzičkom putu (apoptosom).'},
+  {t:'kaspaza-3', why:'Kaspaza-3 je efektorska.'},
+  {t:'kaspaza-8', ok:true, why:'Točno – aktivira se u DISC-u.'},
+  {t:'kaspaza-12', why:'Kaspaza-12 (miš) spominje se kod ER-stresa.'}]},
+ {lec:'p13', text:'Scramblazu, koja premješta fosfatidilserin na površinu stanice, aktiviraju…', opts:[
+  {t:'kaspaze', ok:true, why:'Točno.'},
+  {t:'IAP proteini', why:'IAP inhibiraju kaspaze.'},
+  {t:'fagociti', why:'Fagociti fosfatidilserin prepoznaju, ne aktiviraju scramblazu.'},
+  {t:'Bcl-2', why:'Bcl-2 je antiapoptotički.'}]},
+ {lec:'p14', text:'Edwardsov sindrom ima kariotip…', opts:[
+  {t:'47,XX,+13', why:'To je Patauov sindrom.'},
+  {t:'47,XX,+18', ok:true, why:'Točno – trisomija 18.'},
+  {t:'47,XX,+21', why:'To je Downov sindrom.'},
+  {t:'45,X', why:'To je Turnerov sindrom.'}]},
+ {lec:'p14', text:'Robertsonova translokacija nastaje…', opts:[
+  {t:'spajanjem dva akrocentrična kromosoma lomom u području centromere', ok:true, why:'Točno – 13, 14, 15, 21, 22; q10.'},
+  {t:'uzajamnom razmjenom dijelova dva nehomologna kromosoma', why:'To je recipročna translokacija.'},
+  {t:'okretanjem dijela kromosoma za 180°', why:'To je inverzija.'},
+  {t:'lomom na oba kraja kromosoma', why:'To daje prstenasti (ring) kromosom.'}]},
+ {lec:'p15', text:'RNA početnicu za replikaciju sintetizira…', opts:[
+  {t:'DNA polimeraza δ', why:'Polimeraza ne može započeti lanac.'},
+  {t:'DNA primaza', ok:true, why:'Točno – vrsta RNA polimeraze, koristi rNTP.'},
+  {t:'DNA ligaza', why:'Ligaza spaja Okazakijeve fragmente.'},
+  {t:'RNaza H', why:'RNaza H početnice uklanja.'}]},
+ {lec:'p15', text:'Progerija (Hutchinson-Gilford) uzrokovana je mutacijama gena…', opts:[
+  {t:'BLM za RecQ helikazu', why:'To je Bloomov sindrom.'},
+  {t:'LMNA za lamin A', ok:true, why:'Točno – autosomno dominantno.'},
+  {t:'FMR1', why:'To je sindrom fragilnog X.'},
+  {t:'TBX5', why:'To je Holt-Oramov sindrom.'}]},
+ {lec:'p16', text:'Koji opći transkripcijski faktor fosforilira CTD RNA polimeraze II?', opts:[
+  {t:'TFIID', why:'TFIID (TBP) veže TATA-slog.'},
+  {t:'TFIIB', why:'TFIIB se veže nakon TFIID.'},
+  {t:'TFIIH', ok:true, why:'Točno – ima i helikaznu aktivnost.'},
+  {t:'TFIIF', why:'TFIIF dolazi s Pol II.'}]},
+ {lec:'p16', text:'rRNA 5.8S, 18S i 28S prepisuje…', opts:[
+  {t:'RNA polimeraza I', ok:true, why:'Točno.'},
+  {t:'RNA polimeraza II', why:'Pol II: mRNA, miRNA, lncRNA.'},
+  {t:'RNA polimeraza III', why:'Pol III: tRNA i 5S rRNA.'},
+  {t:'mitohondrijska polimeraza', why:'Ona prepisuje mitohondrijske gene.'}]},
+ {lec:'p18', text:'STOP kodoni su…', opts:[
+  {t:'AUG, UAA, UGA', why:'AUG je START kodon (Met).'},
+  {t:'UAA, UAG, UGA', ok:true, why:'Točno.'},
+  {t:'UAU, UAC, UGG', why:'UAU i UAC kodiraju tirozin.'},
+  {t:'UUU, UAG, UGA', why:'UUU kodira fenilalanin.'}]},
+ {lec:'p19', text:'Ubikvitin se na protein koji će se razgraditi veže preko…', opts:[
+  {t:'bočnog ogranka lizina', ok:true, why:'Točno – amino skupina lizina.'},
+  {t:'serina', why:'Na serin se veže fosfat ili O-vezani šećer.'},
+  {t:'asparagina', why:'Na asparagin se veže N-vezani šećer.'},
+  {t:'N-terminalnog glicina', why:'Tu se veže miristinska kiselina.'}]},
+ {lec:'p20', text:'Ahondroplazija je posljedica…', opts:[
+  {t:'nonsense mutacije u genu TBX5', why:'To je Holt-Oramov sindrom.'},
+  {t:'missense mutacije u genu FGFR3', ok:true, why:'Točno – najčešće Gly380Arg.'},
+  {t:'ekspanzije CGG ponavljanja', why:'To je fragilni X.'},
+  {t:'delecije ΔF508', why:'To je cistična fibroza.'}]},
+ {lec:'p20', text:'Huntingtonova bolest je dinamička mutacija s ponavljanjem…', opts:[
+  {t:'CGG', why:'CGG = fragilni X.'},
+  {t:'CTG', why:'CTG = miotonična distrofija.'},
+  {t:'CAG', ok:true, why:'Točno.'},
+  {t:'GAA', why:'GAA = Friedreichova ataksija.'}]},
+ {lec:'p21', text:'Xeroderma pigmentosum nastaje zbog greške u…', opts:[
+  {t:'popravku pogrešno sparenih baza', why:'MMR greške → nasljedni nepolipozni kolorektalni karcinom.'},
+  {t:'popravku izrezivanjem baza', why:'BER popravlja depurinacije i deaminacije.'},
+  {t:'popravku izrezivanjem nukleotida', ok:true, why:'Točno – XP proteini, timinski dimeri.'},
+  {t:'nehomolognom spajanju krajeva', why:'NHEJ popravlja dvolančane lomove.'}]},
+ /* UPUTA II – dva točna */
+ {lec:'p12', two:true, text:'Odredite <b>točne</b> tvrdnje o mejozi:', opts:[
+  {t:'sastoji se od dvije diobe, a samo jedne replikacije DNA', ok:true, why:'Točno.'},
+  {t:'u anafazi I razdvajaju se homologni kromosomi', ok:true, why:'Točno – sestrinske kromatide ostaju zajedno.'},
+  {t:'u interkinezi se replicira DNA', why:'Netočno – u interkinezi NEMA S faze.'},
+  {t:'nakon mejoze II nastaju 2 haploidne stanice', why:'Netočno – nastaju 4 stanice.'}]},
+ {lec:'p12', two:true, text:'Odredite <b>točne</b> tvrdnje o profazi I:', opts:[
+  {t:'u leptotenu nastaju kijazme', why:'Netočno – u leptotenu nastaju dvolančani lomovi DNA; kijazme u pahitenu.'},
+  {t:'u zigotenu počinje sinapsa', ok:true, why:'Točno.'},
+  {t:'u pahitenu je sinaptonemski kompleks potpuno formiran', ok:true, why:'Točno.'},
+  {t:'u diplotenu se sinaptonemski kompleks tek formira', why:'Netočno – u diplotenu se razgrađuje.'}]},
+ {lec:'p13', two:true, text:'Odredite <b>točne</b> tvrdnje o apoptozi:', opts:[
+  {t:'stanica nabubri i pukne', why:'Netočno – to je nekroza.'},
+  {t:'aktivan je proces koji troši ATP', ok:true, why:'Točno.'},
+  {t:'ne izaziva upalu', ok:true, why:'Točno – sadržaj ostaje u apoptotičkim tjelešcima.'},
+  {t:'isključivo je patološki proces', why:'Netočno – fiziološka je i patološka.'}]},
+ {lec:'p13', two:true, text:'Za intrinzički (mitohondrijski) put apoptoze vrijedi:', opts:[
+  {t:'Bax/Bak stvaraju pore u vanjskoj membrani mitohondrija', ok:true, why:'Točno.'},
+  {t:'pokreće ga vezanje Fas-liganda na receptor', why:'Netočno – to je ekstrinzički put.'},
+  {t:'apoptosom čine citokrom c, Apaf-1 i kaspaza-9', ok:true, why:'Točno.'},
+  {t:'u njemu nastaje DISC', why:'Netočno – DISC je ekstrinzički put.'}]},
+ {lec:'p14', two:true, text:'Nađite <b>točne</b> tvrdnje:', opts:[
+  {t:'izostanak ženskih spolnih karakteristika i neplodnost svojstveni su Turnerovu sindromu', ok:true, why:'Točno – 45,X.'},
+  {t:'osobe s kariotipom 47,XXY nemaju problema s reprodukcijom', why:'Netočno – Klinefelter: azoospermija, neplodnost.'},
+  {t:'mozaičan kariotip nastaje nepravilnim razdvajanjem u mitozi nakon oplodnje', ok:true, why:'Točno.'},
+  {t:'muškarci 47,XYY imaju izražene tjelesne anomalije', why:'Netočno – fizički su normalni.'}]},
+ {lec:'p14', two:true, text:'U <b>balansirane</b> strukturne aberacije spadaju:', opts:[
+  {t:'recipročna translokacija', ok:true, why:'Točno.'},
+  {t:'delecija', why:'Netočno – gubitak materijala (nebalansirana).'},
+  {t:'inverzija', ok:true, why:'Točno.'},
+  {t:'izokromosom', why:'Netočno – nebalansiran.'}]},
+ {lec:'p15', two:true, text:'Odredite <b>točne</b> tvrdnje vezane uz DNA polimerazu:', opts:[
+  {t:'dodaje nove deoksiribonukleotide na 3′ slobodni OH kraj', ok:true, why:'Točno.'},
+  {t:'ne može započeti sintezu bez početnice', ok:true, why:'Točno.'},
+  {t:'polimerizira novi lanac u smjeru 3′ prema 5′', why:'Netočno – samo 5′→3′.'},
+  {t:'u reakciji sinteze stvara N-glikozidnu vezu', why:'Netočno – fosfodiestersku.'}]},
+ {lec:'p15', two:true, text:'Za zaostajući (trom) lanac vrijedi:', opts:[
+  {t:'sintetizira se kontinuirano u smjeru kretanja rašlje', why:'Netočno – to je vodeći lanac.'},
+  {t:'sintetizira se diskontinuirano, u Okazakijevim fragmentima', ok:true, why:'Točno.'},
+  {t:'treba mu samo jedna početnica na početku', why:'Netočno – svaki fragment treba novu početnicu.'},
+  {t:'njegove fragmente spaja DNA ligaza', ok:true, why:'Točno – uz ATP.'}]},
+ {lec:'p16', two:true, text:'Odredite <b>točne</b> tvrdnje o promotorima eukariota:', opts:[
+  {t:'TATA-slog je oko 25–30 nukleotida uzvodno od +1', ok:true, why:'Točno.'},
+  {t:'TATA-slog imaju svi promotori RNA polimeraze II', why:'Netočno – najviše ~30 %.'},
+  {t:'Inr elementi obuhvaćaju mjesto početka transkripcije', ok:true, why:'Točno.'},
+  {t:'karakteristični su sljedovi −10 i −35', why:'Netočno – to je promotor E. coli.'}]},
+ {lec:'p16', two:true, text:'Za doradu pre-mRNA vrijedi:', opts:[
+  {t:'5′ kapa (m7G) štiti 5′ kraj od razgradnje', ok:true, why:'Točno – i važna je za početak translacije.'},
+  {t:'odvija se u citoplazmi', why:'Netočno – u jezgri.'},
+  {t:'poli-A polimeraza dodaje oko 200–300 adenina', ok:true, why:'Točno.'},
+  {t:'prekrajanjem se izrezuju egzoni', why:'Netočno – izrezuju se introni.'}]},
+ {lec:'p18', two:true, text:'Odredite <b>točne</b> tvrdnje o tRNA:', opts:[
+  {t:'antikodon se veže na komplementarni kodon u mRNA', ok:true, why:'Točno.'},
+  {t:'duga je 200–300 nukleotida', why:'Netočno – 70–80 nukleotida.'},
+  {t:'aminokiselina se veže na 3′ CCA kraj', ok:true, why:'Točno.'},
+  {t:'stanice imaju točno 20 različitih tRNA', why:'Netočno – oko 40 tRNA za 20 aminokiselina.'}]},
+ {lec:'p19', two:true, text:'Šaperoni:', opts:[
+  {t:'stabiliziraju nesmotane ili djelomično smotane proteine', ok:true, why:'Točno.'},
+  {t:'ulaze u konačnu strukturu proteina', why:'Netočno – ne ulaze.'},
+  {t:'Hsp60 je bačvasti kompleks u kojem se protein smata uz ATP', ok:true, why:'Točno.'},
+  {t:'kataliziraju stvaranje disulfidnih veza', why:'Netočno – to radi PDI.'}]},
+ {lec:'p20', two:true, text:'Odredite <b>točne</b> tvrdnje o mutacijama:', opts:[
+  {t:'zamjena citozina timinom je tranzicija', ok:true, why:'Točno – pirimidin → pirimidin.'},
+  {t:'delecija tri nukleotida uvijek uzrokuje pomak okvira', why:'Netočno – ΔF508 nije frameshift.'},
+  {t:'nonsense mutacija stvara STOP kodon i prijevremenu terminaciju', ok:true, why:'Točno.'},
+  {t:'somatske mutacije prenose se na potomstvo', why:'Netočno – prenose se germinativne.'}]},
+ {lec:'p21', two:true, text:'Odredite <b>točne</b> tvrdnje o popravku DNA:', opts:[
+  {t:'pirimidinski dimeri u čovjeka se popravljaju izrezivanjem nukleotida', ok:true, why:'Točno.'},
+  {t:'fotoreaktivacija je važan popravak u čovjeka', why:'Netočno – NE postoji u čovjeka.'},
+  {t:'popravak pogrešno sparenih baza izrezuje dio novog lanca', ok:true, why:'Točno.'},
+  {t:'nehomologno spajanje krajeva koristi homologni kalup', why:'Netočno – spaja krajeve bez kalupa.'}]},
+ {lec:'p21', two:true, text:'Za homolognu rekombinaciju vrijedi:', opts:[
+  {t:'Hollidayeva veza je njezin međuprodukt', ok:true, why:'Točno.'},
+  {t:'mijenja ustroj gena na kromosomu', why:'Netočno – izmjenjuju se samo alelne varijante.'},
+  {t:'sudjeluje u crossing-overu tijekom mejoze', ok:true, why:'Točno.'},
+  {t:'ne zahtijeva homologiju slijeda', why:'Netočno – to vrijedi za transpoziciju.'}]}
+];
+
+function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var x=a[i]; a[i]=a[j]; a[j]=x; } return a; }
+function lecCode(id){ for(var i=0;i<LECTURES.length;i++) if(LECTURES[i].id===id) return LECTURES[i].code; return id; }
+function renderExam(shuffled){
+  setTitle('Probni ispit');
+  var one=EXAM.filter(function(q){return !q.two;}), two=EXAM.filter(function(q){return q.two;});
+  if(shuffled){ one=shuffle(one.slice()); two=shuffle(two.slice()); }
+  var list=one.concat(two).map(function(q){ return {q:q, order: shuffled ? shuffle(q.opts.map(function(_,i){return i;})) : q.opts.map(function(_,i){return i;})}; });
+  var best=state.quiz.ispit;
+  var h='<h2>🎯 Probni ispit</h2><p class="muted">'+EXAM.length+' pitanja u formatu kolokvija, sva iz skripte. Svako pitanje ima jedan pokušaj.'+(best?' Najbolji rezultat: <b>'+best.best+'/'+EXAM.length+'</b>.':'')+'</p>';
+  list.forEach(function(it,n){
+    if(n===0) h+='<h3>UPUTA I (jedan točan odgovor)</h3>';
+    if(n===one.length) h+='<h3>UPUTA II (dva točna odgovora)</h3>';
+    h+='<section class="card q" data-n="'+n+'"><p><b>'+(n+1)+'.</b> '+it.q.text+' <span class="muted" style="font-size:14px">('+lecCode(it.q.lec)+')</span></p>'+
+      it.order.map(function(oi,k){ return '<button class="opt" data-j="'+oi+'">'+String.fromCharCode(97+k)+') '+it.q.opts[oi].t+'</button>'; }).join('')+
+      (it.q.two?'<button class="btn" data-check style="width:100%;margin-top:4px" disabled>Provjeri (odaberi 2)</button>':'')+'<div class="fbq"></div></section>';
+  });
+  h+='<div class="card hidden" id="res"></div><div class="row"><button class="btn sec" id="again">↻ Ponovi (novi redoslijed)</button><a class="btn" style="display:grid;place-items:center;text-decoration:none" href="#izbornik">Izbornik</a></div>';
+  app.innerHTML=h; window.scrollTo(0,0);
+  var res={};
+  function done(n,ok){
+    res[n]=ok;
+    if(Object.keys(res).length<list.length) return;
+    var sc=0, miss={}; Object.keys(res).forEach(function(k){ if(res[k]) sc++; else { var l=list[k].q.lec; miss[l]=(miss[l]||0)+1; } });
+    var prev=state.quiz.ispit||{best:0}; state.quiz.ispit={best:Math.max(prev.best||0,sc), last:sc, at:Date.now()}; saveState();
+    var weak=Object.keys(miss).sort(function(a,b){return miss[b]-miss[a];});
+    var r=document.getElementById('res'); r.classList.remove('hidden');
+    r.innerHTML='<div class="score">Rezultat: '+sc+' / '+list.length+' ('+Math.round(sc/list.length*100)+' %)</div>'+
+      (weak.length?'<p>Ponovi predavanja: '+weak.map(function(l){ return '<a href="#'+l+'-s1">'+lecCode(l)+'</a> ('+miss[l]+')'; }).join(', ')+'</p>':'<p>🏆 Sve točno!</p>')+
+      '<p class="muted">Najbolji rezultat: '+state.quiz.ispit.best+'/'+list.length+'</p>';
+    r.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  app.querySelectorAll('section.q').forEach(function(sec){
+    var n=+sec.dataset.n, q=list[n].q, btns=sec.querySelectorAll('.opt'), fb=sec.querySelector('.fbq');
+    function reveal(sel){
+      btns.forEach(function(b){ var o=q.opts[+b.dataset.j]; b.disabled=true; if(o.ok) b.classList.add('ok'); else if(sel.indexOf(+b.dataset.j)>=0) b.classList.add('bad'); });
+      var good=sel.every(function(j){return q.opts[j].ok;}) && sel.length===(q.two?2:1);
+      var expl=sel.map(function(j){ return (q.opts[j].ok?'✅ ':'❌ ')+q.opts[j].t+' – '+q.opts[j].why; });
+      q.opts.forEach(function(o,j){ if(o.ok && sel.indexOf(j)<0) expl.push('✔️ Točno je bilo: <b>'+o.t+'</b> – '+o.why); });
+      fb.innerHTML='<div class="fb '+(good?'ok':'bad')+'">'+expl.join('<br>')+'</div>';
+      var c=sec.querySelector('[data-check]'); if(c) c.classList.add('hidden');
+      done(n,good);
+    }
+    if(!q.two){ btns.forEach(function(b){ b.onclick=function(){ reveal([+b.dataset.j]); }; }); return; }
+    var sel=[], chk=sec.querySelector('[data-check]');
+    btns.forEach(function(b){ b.onclick=function(){
+      var j=+b.dataset.j, i=sel.indexOf(j);
+      if(i>=0){ sel.splice(i,1); b.style.outline=''; } else if(sel.length<2){ sel.push(j); b.style.outline='3px solid var(--accent)'; }
+      chk.disabled=sel.length!==2; chk.textContent=sel.length===2?'Provjeri':'Provjeri (odaberi 2)';
+    }; });
+    chk.onclick=function(){ btns.forEach(function(b){ b.style.outline=''; }); reveal(sel.slice()); };
+  });
+  document.getElementById('again').onclick=function(){ renderExam(true); };
+}
+
 /* ================= RUTER ================= */
 function route(){
   stopTTS(); abortAsk(); cur=null;
   var h=location.hash.replace(/^#\/?/,''), parts=h.split(/[-\/]/), L=null;
+  if(h==='ispit') return renderExam(false);
   for(var k=0;k<LECTURES.length;k++) if(LECTURES[k].id===parts[0] && LECTURES[k].scenes) L=LECTURES[k];
   if(!L) return renderMenu();
   if(parts[1]==='kraj') return renderEnd(L);
