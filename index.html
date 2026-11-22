@@ -2648,6 +2648,8 @@ function renderMenu(){
   var h='<h2>Videopredavanja – 2. kolokvij</h2><p class="muted">'+(d>0?'📅 Do kolokvija (26. 11. 2026.): <b>'+d+' '+(d%10===1&&d%100!==11?'dan':'dana')+'</b>':(d===0?'📅 Kolokvij je <b>danas</b> – sretno! 🍀':'Kolokvij je prošao.'))+'</p>';
   var ib=state.quiz.ispit;
   h+='<a class="card lec" href="#ispit" style="border-color:var(--accent)"><div class="num">🎯</div><div style="flex:1;min-width:0"><b>Probni ispit</b><div class="muted" style="font-size:15px">'+EXAM.length+' pitanja · format kolokvija (1 i 2 točna)'+(ib?' · najbolje '+ib.best+'/'+EXAM.length:'')+'</div></div></a>';
+  var sb=state.quiz.stari;
+  h+='<a class="card lec" href="#stari" style="border-color:var(--accent)"><div class="num">📸</div><div style="flex:1;min-width:0"><b>Stari ispit (tvoja pitanja)</b><div class="muted" style="font-size:15px">'+OLD.length+' pitanja s fotografija, samo iz skripte'+(sb?' · najbolje '+sb.best+'/'+OLD.length:'')+'</div></div></a>';
   LECTURES.forEach(function(L){
     if(L.scenes){
       var n=L.scenes.length, dn=0; for(var i=0;i<n;i++) if(isDone(L,i)) dn++;
@@ -3115,13 +3117,14 @@ var EXAM = [
 
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var x=a[i]; a[i]=a[j]; a[j]=x; } return a; }
 function lecCode(id){ for(var i=0;i<LECTURES.length;i++) if(LECTURES[i].id===id) return LECTURES[i].code; return id; }
-function renderExam(shuffled){
-  setTitle('Probni ispit');
-  var one=EXAM.filter(function(q){return !q.two;}), two=EXAM.filter(function(q){return q.two;});
+function renderExam(shuffled,key){
+  key=key||'ispit'; var SET=key==='stari'?OLD:EXAM, NAME=key==='stari'?'📸 Stari ispit':'🎯 Probni ispit';
+  setTitle(NAME.slice(3));
+  var one=SET.filter(function(q){return !q.two;}), two=SET.filter(function(q){return q.two;});
   if(shuffled){ one=shuffle(one.slice()); two=shuffle(two.slice()); }
   var list=one.concat(two).map(function(q){ return {q:q, order: shuffled ? shuffle(q.opts.map(function(_,i){return i;})) : q.opts.map(function(_,i){return i;})}; });
-  var best=state.quiz.ispit;
-  var h='<h2>🎯 Probni ispit</h2><p class="muted">'+EXAM.length+' pitanja u formatu kolokvija, sva iz skripte. Svako pitanje ima jedan pokušaj.'+(best?' Najbolji rezultat: <b>'+best.best+'/'+EXAM.length+'</b>.':'')+'</p>';
+  var best=state.quiz[key];
+  var h='<h2>'+NAME+'</h2><p class="muted">'+(key==='stari'?SET.length+' pitanja s tvojih fotografija starih ispita, doslovno – samo ona koja pokriva skripta.':SET.length+' pitanja u formatu kolokvija, sva iz skripte.')+' Svako pitanje ima jedan pokušaj.'+(best?' Najbolji rezultat: <b>'+best.best+'/'+SET.length+'</b>.':'')+'</p>';
   list.forEach(function(it,n){
     if(n===0) h+='<h3>UPUTA I (jedan točan odgovor)</h3>';
     if(n===one.length) h+='<h3>UPUTA II (dva točna odgovora)</h3>';
@@ -3136,12 +3139,12 @@ function renderExam(shuffled){
     res[n]=ok;
     if(Object.keys(res).length<list.length) return;
     var sc=0, miss={}; Object.keys(res).forEach(function(k){ if(res[k]) sc++; else { var l=list[k].q.lec; miss[l]=(miss[l]||0)+1; } });
-    var prev=state.quiz.ispit||{best:0}; state.quiz.ispit={best:Math.max(prev.best||0,sc), last:sc, at:Date.now()}; saveState();
+    var prev=state.quiz[key]||{best:0}; state.quiz[key]={best:Math.max(prev.best||0,sc), last:sc, at:Date.now()}; saveState();
     var weak=Object.keys(miss).sort(function(a,b){return miss[b]-miss[a];});
     var r=document.getElementById('res'); r.classList.remove('hidden');
     r.innerHTML='<div class="score">Rezultat: '+sc+' / '+list.length+' ('+Math.round(sc/list.length*100)+' %)</div>'+
       (weak.length?'<p>Ponovi predavanja: '+weak.map(function(l){ return '<a href="#'+l+'-s1">'+lecCode(l)+'</a> ('+miss[l]+')'; }).join(', ')+'</p>':'<p>🏆 Sve točno!</p>')+
-      '<p class="muted">Najbolji rezultat: '+state.quiz.ispit.best+'/'+list.length+'</p>';
+      '<p class="muted">Najbolji rezultat: '+state.quiz[key].best+'/'+list.length+'</p>';
     r.scrollIntoView({behavior:'smooth',block:'center'});
   }
   app.querySelectorAll('section.q').forEach(function(sec){
@@ -3151,7 +3154,7 @@ function renderExam(shuffled){
       var good=sel.every(function(j){return q.opts[j].ok;}) && sel.length===(q.two?2:1);
       var expl=sel.map(function(j){ return (q.opts[j].ok?'✅ ':'❌ ')+q.opts[j].t+' – '+q.opts[j].why; });
       q.opts.forEach(function(o,j){ if(o.ok && sel.indexOf(j)<0) expl.push('✔️ Točno je bilo: <b>'+o.t+'</b> – '+o.why); });
-      fb.innerHTML='<div class="fb '+(good?'ok':'bad')+'">'+expl.join('<br>')+'</div>';
+      fb.innerHTML='<div class="fb '+(good?'ok':'bad')+'">'+expl.join('<br>')+'</div>'+(q.note?'<div class="add">ℹ️ '+q.note+'</div>':'');
       var c=sec.querySelector('[data-check]'); if(c) c.classList.add('hidden');
       done(n,good);
     }
@@ -3164,14 +3167,122 @@ function renderExam(shuffled){
     }; });
     chk.onclick=function(){ btns.forEach(function(b){ b.style.outline=''; }); reveal(sel.slice()); };
   });
-  document.getElementById('again').onclick=function(){ renderExam(true); };
+  document.getElementById('again').onclick=function(){ renderExam(true,key); };
 }
+
+
+/* ================= STARI ISPIT (pitanja s fotografija, samo ona koja pokriva skripta) ================= */
+var OLD = [
+ {lec:'p15', text:'Nađi <b>točnu</b> tvrdnju vezanu uz DNA replikaciju:', opts:[
+  {t:'vodeći lanac DNA sintetizira se u smjeru 5′-3′', ok:true, why:'Točno – svi novi lanci rastu 5′→3′.'},
+  {t:'dijelovi vodećeg lanca DNA nazivaju se Okazakijevi fragmenti', why:'Okazakijevi fragmenti su na <b>zaostajućem</b> lancu.'},
+  {t:'DNA polimeraza katalizira stvaranje N-glikozidne veze', why:'Stvara <b>fosfodiestersku</b> vezu.'},
+  {t:'supstrat DNA polimeraze je ribonukleozid-5′-trifosfat', why:'Supstrat je <b>deoksiribonukleozid</b>-5′-trifosfat (dNTP); rNTP koristi primaza.'}]},
+ {lec:'p15', text:'Odredite <b>netočnu</b> tvrdnju vezanu uz telomere:', opts:[
+  {t:'to su krajnji dijelovi kromosoma', why:'Točna tvrdnja.'},
+  {t:'građene su od ponavljajuće nekodirajuće DNA', why:'Točna tvrdnja – ponavljanja bogata G.'},
+  {t:'repliciraju se telomerazom', why:'Točna tvrdnja.'},
+  {t:'DNA polimeraza replicira krajnje 5′ dijelove DNA', ok:true, why:'Ovo je NETOČNO – krajeve replicira telomeraza (produljuje 3′ kraj).'}]},
+ {lec:'p18', text:'Aminoacil-tRNA ulazi u proces sinteze proteina na ribosomu tako što prepozna:', opts:[
+  {t:'kodon', ok:true, why:'Točno – njezin antikodon veže se na kodon u mRNA.'},
+  {t:'antikodon', why:'Antikodon je dio same tRNA – njime prepoznaje kodon.'},
+  {t:'kod', why:'Kod su tri baze u DNA.'},
+  {t:'amino kiselinu', why:'Ak na tRNA stavlja aminoacil-tRNA sintetaza.'}]},
+ {lec:'p14', text:'U balansirane kromosomske aberacije spada sljedeći kariotip:', opts:[
+  {t:'47,XXX', why:'Numerička aberacija (trisomija).'},
+  {t:'46,XY,der(13;14)(q10;q10),+13', why:'Višak materijala kromosoma 13 → nebalansirano.'},
+  {t:'46,XY,t(1;9)(q23;q21)', ok:true, why:'Točno – recipročna translokacija je balansirana.'},
+  {t:'46,XY,del(4p)', why:'Delecija je nebalansirana.'}]},
+ {lec:'p16', text:'Odredite <b>netočnu</b> tvrdnju vezanu uz prekrajanje – „splicing”:', opts:[
+  {t:'snRNA koje su u tjelešcima za prekrajanje imaju ulogu u prepoznavanju 5′ i 3′ mjesta za izrezivanje introna', why:'Točna tvrdnja.'},
+  {t:'ovaj proces se dešava u jezgri', why:'Točna tvrdnja.'},
+  {t:'snRNA udružene su s proteinima i čine snRNP', why:'Točna tvrdnja.'},
+  {t:'ovaj proces je specifičan za prokariotske i eukariotske stanice', ok:true, why:'Ovo je NETOČNO – prokariotska mRNA se ne dorađuje.'}]},
+ {lec:'p16', text:'Zrela mRNA molekula eukariota <b>ne sadrži</b>:', opts:[
+  {t:'poliadenilni rep na 3′ kraju', why:'Sadrži ga.'},
+  {t:'3′ i 5′ regije koje se ne prevode u protein', why:'Sadrži ih (UTR).'},
+  {t:'„kapu” 7-metilgvanozina na 5′ kraju', why:'Sadrži je.'},
+  {t:'nekodirajuću DNA (introne)', ok:true, why:'Točno – introni se izrezuju.'}]},
+ {lec:'p14', text:'Citogenetičkom analizom kromosomskih aberacija mogu se detektirati:', opts:[
+  {t:'točkaste mutacije', why:'Premale za mikroskop.'},
+  {t:'modifikatori baza', why:'To su kemijski mutageni.'},
+  {t:'acentrični fragmenti', ok:true, why:'Točno.'},
+  {t:'povratne mutacije', why:'Genske promjene.'},
+  {t:'restrikcijski fragmenti', why:'Nije citogenetika.'}]},
+ /* UPUTA II */
+ {lec:'p16', two:true, text:'Odredite <b>točne</b> tvrdnje vezane uz promotorske regije u eukariota:', opts:[
+  {t:'nalaze se ispred startnog mjesta transkripcije', ok:true, why:'Točno – uzvodno od +1.'},
+  {t:'specifično ih prepoznaju transkripcijski faktori pa RNA-polimeraza', ok:true, why:'Točno – TFIID (TBP) prvi, zatim Pol II.'},
+  {t:'prepisuju se i dio su RNA transkripta', why:'Netočno.'},
+  {t:'specifično ih prepoznaje DNA-polimeraza', why:'Netočno – DNA polimeraza je replikacija.'}]},
+ {lec:'p15', two:true, text:'Odredite <b>točne</b> tvrdnje vezane uz DNA polimerazu:', opts:[
+  {t:'dodaje nove deoksiribonukleotide na 3′ slobodni OH kraj rastućeg polinukleotidnog lanca', ok:true, why:'Točno.'},
+  {t:'ne može započeti sintezu bez prethodno formirane početnice', ok:true, why:'Točno.'},
+  {t:'polimerizira novi lanac u smjeru 3′ prema 5′ kraju', why:'Netočno – 5′→3′.'},
+  {t:'u reakciji sinteze stvara N-glikozidnu vezu', why:'Netočno – fosfodiestersku.'}]},
+ {lec:'p18', two:true, text:'Zrela mRNA molekula eukariota <b>sadrži</b>:', opts:[
+  {t:'poliadenilni rep na 3′ kraju', ok:true, why:'Točno.'},
+  {t:'3′ i 5′ regije koje se ne prevode u protein', ok:true, why:'Točno – UTR.'},
+  {t:'TATA kutiju (box)', why:'Netočno – TATA je u promotoru DNA.'},
+  {t:'nekodirajuću DNA (introne)', why:'Netočno – introni su izrezani.'}]},
+ {lec:'p21', two:true, text:'Za Hollidayevu vezu vrijedi:', opts:[
+  {t:'nastaje u replikacijskim rašljama', why:'Netočno – tamo je translezijska sinteza.'},
+  {t:'spoj je ukriženih lanaca nastalih homolognim sparivanjem dvije DNA molekule', ok:true, why:'Točno.'},
+  {t:'međuprodukt je rekombinacije', ok:true, why:'Točno.'},
+  {t:'nije karakteristična za čovjeka', why:'Netočno – to vrijedi za fotoreaktivaciju.'}]},
+ {lec:'p20', two:true, text:'<i>Frameshift</i> mutacije posljedica su:', opts:[
+  {t:'transverzije nukleotida', why:'Zamjena ne pomiče okvir.'},
+  {t:'adicije nukleotida', ok:true, why:'Točno.'},
+  {t:'tranzicije nukleotida', why:'Zamjena ne pomiče okvir.'},
+  {t:'delecije nukleotida', ok:true, why:'Točno (ako nije višekratnik 3).'}]},
+ {lec:'p20', two:true, text:'Zamjena citozina s timinom je:', opts:[
+  {t:'transverzija', why:'Netočno – C i T su oba pirimidini.'},
+  {t:'tranzicija', ok:true, why:'Točno.'},
+  {t:'zamjena pirimidinske s pirimidinskom bazom', ok:true, why:'Točno.'},
+  {t:'zamjena purinske s purinskom bazom', why:'Netočno.'}]},
+ {lec:'p16', two:true, text:'Prekrajanje pre-mRNA (engl. <i>Splicing</i>):', opts:[
+  {t:'uključuje modifikaciju 5′ i 3′ kraja pre-mRNA', why:'Netočno – kapa i poli-A su zasebni koraci dorade.'},
+  {t:'podrazumijeva izrezivanje introna', ok:true, why:'Točno.'},
+  {t:'se dešava uz pomoć malih nuklearnih ribonukleoproteinskih čestica', ok:true, why:'Točno – snRNP.'},
+  {t:'se odvija u citoplazmi', why:'Netočno – u jezgri.'}]},
+ {lec:'p19', text:'Šaperoni:', note:'Na papiru je ovo pitanje u dijelu s dva točna odgovora. Prema skripti sigurno je točno c). Odgovor b) je upitan: šaperoni pomažu smatanju, ali skripta kao enzime koji kataliziraju smatanje navodi PDI i PPI. Ako na ispitu traže dva, b) je najvjerojatniji drugi.', opts:[
+  {t:'su enzimi koji sudjeluju u glikozilaciji proteina', why:'Netočno.'},
+  {t:'su enzimi koji kataliziraju smatanje proteina', why:'Upitno – skripta ih zove proteinima koji pomažu smatanju; enzimi smatanja su PDI i PPI.'},
+  {t:'stabiliziraju djelomično smotane proteine pri transportu do ciljnog odredišta', ok:true, why:'Točno.'},
+  {t:'sudjeluju u procesu razgradnje proteina', why:'Netočno – to je ubikvitin–proteasom.'}]},
+ {lec:'p20', two:true, text:'Prijevremena terminacija polipeptida posljedica je:', opts:[
+  {t:'<i>nonsense</i> mutacije', ok:true, why:'Točno.'},
+  {t:'tihe mutacije', why:'Netočno – Ak ista.'},
+  {t:'<i>missense</i> mutacije', why:'Netočno – druga Ak, lanac nije skraćen.'},
+  {t:'pojave STOP kodona', ok:true, why:'Točno.'}]},
+ {lec:'p21', two:true, text:'Za izravni popravak vrijedi:', opts:[
+  {t:'podrazumijeva obrat kemijske reakcije koja je dovela do oštećenja', ok:true, why:'Točno.'},
+  {t:'podrazumijeva veliku vjerojatnost pogreške', why:'Netočno – to je translezijska sinteza.'},
+  {t:'uključuje zamjenu oštećene DNA rekombinacijom s neoštećenom molekulom', why:'Netočno – to je popravak dvolančanih lomova.'},
+  {t:'uključuje popravak alkiliranih gvaninskih ostataka', ok:true, why:'Točno.'}]},
+ {lec:'p14', two:true, text:'Lom na oba kraka jednog kromosoma može dovesti do formiranja:', opts:[
+  {t:'ring kromosoma', ok:true, why:'Točno.'},
+  {t:'paracentrične inverzije', why:'Netočno – oba loma su u istom kraku.'},
+  {t:'pericentrične inverzije', ok:true, why:'Točno – lomovi u p i q kraku.'},
+  {t:'recipročne translokacije', why:'Netočno – trebaju dva kromosoma.'}]},
+ {lec:'p21', two:true, text:'Pirimidinski dimeri popravljaju se:', opts:[
+  {t:'izravnim obratom reakcije', ok:true, why:'Točno – fotoreaktivacija (ali NE u čovjeka).'},
+  {t:'izrezivanjem baze', why:'Netočno – BER je za depurinacije i deaminacije.'},
+  {t:'izrezivanjem AP mjesta', why:'Netočno.'},
+  {t:'izrezivanjem nukleotida', ok:true, why:'Točno – NER.'}]},
+ {lec:'p21', two:true, text:'Ponovljeni sljedovi koji se mogu premještati po genomu su:', opts:[
+  {t:'centromerna ponavljanja', why:'Netočno.'},
+  {t:'telomerna ponavljanja', why:'Netočno.'},
+  {t:'DNA transpozoni', ok:true, why:'Točno – transpozicija.'},
+  {t:'retrotranspozoni', ok:true, why:'Točno.'}]}
+];
 
 /* ================= RUTER ================= */
 function route(){
   stopTTS(); abortAsk(); cur=null;
   var h=location.hash.replace(/^#\/?/,''), parts=h.split(/[-\/]/), L=null;
-  if(h==='ispit') return renderExam(false);
+  if(h==='ispit') return renderExam(false,'ispit');
+  if(h==='stari') return renderExam(false,'stari');
   for(var k=0;k<LECTURES.length;k++) if(LECTURES[k].id===parts[0] && LECTURES[k].scenes) L=LECTURES[k];
   if(!L) return renderMenu();
   if(parts[1]==='kraj') return renderEnd(L);
