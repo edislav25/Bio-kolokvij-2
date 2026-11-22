@@ -43,7 +43,7 @@ html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;overflow-x:hidden}
 button{font:inherit;color:inherit}
 .wrap{max-width:560px;margin:0 auto;padding:0 16px 48px}
-header.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
 header.top .in{max-width:560px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px}
 header.top h1{font-size:17px;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ib{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer;padding:0 10px}
@@ -706,7 +706,7 @@ document.getElementById('themeBtn').onclick=function(){
   var dark = state.theme ? state.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
   state.theme = dark ? 'light' : 'dark'; applyTheme(); saveState();
 };
-document.getElementById('homeBtn').onclick=function(){ location.hash='#/'; };
+document.getElementById('homeBtn').onclick=function(){ location.hash='#izbornik'; };
 
 /* ================= IZBORNIK ================= */
 function daysLeft(){ var n=new Date(), a=new Date(n.getFullYear(),n.getMonth(),n.getDate()), k=new Date(2026,10,26); return Math.round((k-a)/864e5); }
@@ -718,14 +718,17 @@ function renderMenu(){
     if(L.scenes){
       var n=L.scenes.length, dn=0; for(var i=0;i<n;i++) if(isDone(L,i)) dn++;
       var qz=state.quiz[L.id];
-      h+='<a class="card lec" href="#/'+L.id+'/s'+(firstOpen(L)+1)+'"><div class="num">'+L.code.replace('/','/<br>')+'</div><div style="flex:1;min-width:0"><b>'+esc(L.title)+'</b><div class="muted" style="font-size:15px">'+dn+'/'+n+' scena'+(qz?' · kviz najbolje '+qz.best+'/5':'')+'</div><div class="bar"><i style="width:'+Math.round(dn/n*100)+'%"></i></div></div></a>';
+      h+='<a class="card lec" href="#'+L.id+'-s'+(firstOpen(L)+1)+'"><div class="num">'+L.code.replace('/','/<br>')+'</div><div style="flex:1;min-width:0"><b>'+esc(L.title)+'</b><div class="muted" style="font-size:15px">'+dn+'/'+n+' scena'+(qz?' · kviz najbolje '+qz.best+'/5':'')+'</div><div class="bar"><i style="width:'+Math.round(dn/n*100)+'%"></i></div></div></a>';
     } else {
       h+='<div class="card lec dis"><div class="num">'+L.code+'</div><div><b>'+esc(L.title)+'</b><div class="muted" style="font-size:15px">'+(L.status==='other'?'već postoji u tvojoj drugoj igri':'uskoro – nakon odobrenja pokusne verzije')+'</div></div></div>';
     }
   });
-  h+='<p class="note">Napredak se sprema u ovom pregledniku (localStorage). Izvor sadržaja: skripta „Biologija, 2. kolokvij”.</p><button class="btn sec" id="resetBtn" style="width:100%">Obriši napredak</button>';
+  h+='<p class="note">Napredak se sprema u ovom pregledniku (localStorage). Izvor sadržaja: skripta „Biologija, 2. kolokvij”.</p><button class="btn sec" id="resetBtn" style="width:100%">Obriši napredak</button><div class="row hidden" id="resetAsk"><span style="flex-basis:100%">Sigurno obrisati sav napredak?</span><button class="btn" id="resetYes">Da, obriši</button><button class="btn sec" id="resetNo">Odustani</button></div>';
   app.innerHTML=h;
-  document.getElementById('resetBtn').onclick=function(){ if(confirm('Obrisati sav napredak?')){ state.scenes={}; state.quiz={}; saveState(); renderMenu(); } };
+  var ask=document.getElementById('resetAsk');
+  document.getElementById('resetBtn').onclick=function(){ ask.classList.remove('hidden'); this.classList.add('hidden'); };
+  document.getElementById('resetNo').onclick=function(){ ask.classList.add('hidden'); document.getElementById('resetBtn').classList.remove('hidden'); };
+  document.getElementById('resetYes').onclick=function(){ state.scenes={}; state.quiz={}; saveState(); renderMenu(); };
   window.scrollTo(0,0);
 }
 
@@ -735,9 +738,9 @@ function chipsHTML(L,i){
   var h='<nav class="chips" aria-label="Scene">';
   for(var k=0;k<L.scenes.length;k++){
     var cls='chip'+(k===i?' cur':'')+(isDone(L,k)?' done':'')+(isUnlocked(L,k)?'':' lock');
-    h+='<a class="'+cls+'" href="#/'+L.id+'/s'+(k+1)+'" aria-label="Scena '+(k+1)+'">'+(k+1)+'</a>';
+    h+='<a class="'+cls+'" href="#'+L.id+'-s'+(k+1)+'" aria-label="Scena '+(k+1)+'">'+(k+1)+'</a>';
   }
-  h+='<a class="chip'+(i==='kraj'?' cur':'')+(allDone(L)?'':' lock')+'" href="#/'+L.id+'/kraj">Σ Kviz</a></nav>';
+  h+='<a class="chip'+(i==='kraj'?' cur':'')+(allDone(L)?'':' lock')+'" href="#'+L.id+'-kraj">Σ Kviz</a></nav>';
   return h;
 }
 function legendHTML(keys){ return '<div class="legend">'+keys.map(function(k){return '<span><b style="background:'+LEG[k][0]+'"></b>'+LEG[k][1]+'</span>';}).join('')+'</div>'; }
@@ -766,7 +769,7 @@ function renderScene(L,i){
     var k=(rates.indexOf(state.rate)+1)%rates.length; state.rate=rates[k]; saveState(); this.textContent=state.rate+'×';
     if(tts.playing){ ttsPause(); ttsStart(); }
   };
-  document.getElementById('nextScene').onclick=function(){ stopTTS(); location.hash = i<L.scenes.length-1 ? '#/'+L.id+'/s'+(i+2) : '#/'+L.id+'/kraj'; };
+  document.getElementById('nextScene').onclick=function(){ stopTTS(); location.hash = i<L.scenes.length-1 ? '#'+L.id+'-s'+(i+2) : '#'+L.id+'-kraj'; };
   applyStep(cur.svg,-1);
   void cur.svg.getBoundingClientRect();
   if(isDone(L,i)) showQuestion();
@@ -874,14 +877,14 @@ function showQuestion(){
 
 /* ================= SAŽETAK + KVIZ ================= */
 function renderEnd(L){
-  if(!allDone(L)){ location.hash='#/'+L.id+'/s'+(firstOpen(L)+1); return; }
+  if(!allDone(L)){ location.hash='#'+L.id+'-s'+(firstOpen(L)+1); return; }
   setTitle(L.code+' · sažetak i kviz');
   var h=chipsHTML(L,'kraj')+'<h2>Σ Sažetak: '+esc(L.title)+'</h2><div class="card"><ul class="sum">'+L.summary.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>'+
     '<button class="btn sec" id="sumPlay" style="width:100%">▶ Poslušaj sažetak</button></div><h2>🎯 Mini kviz (5 pitanja)</h2><p class="muted">Svako pitanje ima jedan pokušaj.</p>';
   L.quiz.forEach(function(q,qi){
     h+='<section class="card q" data-qi="'+qi+'"><p><b>'+(qi+1)+'.</b> '+q.text+'</p>'+q.opts.map(function(o,j){return '<button class="opt" data-j="'+j+'">'+String.fromCharCode(65+j)+') '+o.t+'</button>';}).join('')+'<div class="fbq"></div></section>';
   });
-  h+='<div class="card hidden" id="res"></div><div class="row"><button class="btn sec" id="again">↻ Ponovi kviz</button><a class="btn" style="display:grid;place-items:center;text-decoration:none" href="#/">Izbornik</a></div>';
+  h+='<div class="card hidden" id="res"></div><div class="row"><button class="btn sec" id="again">↻ Ponovi kviz</button><a class="btn" style="display:grid;place-items:center;text-decoration:none" href="#izbornik">Izbornik</a></div>';
   app.innerHTML=h; window.scrollTo(0,0);
   var answers={};
   document.getElementById('sumPlay').onclick=function(){
@@ -912,13 +915,13 @@ function renderEnd(L){
 /* ================= RUTER ================= */
 function route(){
   stopTTS(); cur=null;
-  var h=location.hash.replace(/^#\/?/,''), parts=h.split('/'), L=null;
+  var h=location.hash.replace(/^#\/?/,''), parts=h.split(/[-\/]/), L=null;
   for(var k=0;k<LECTURES.length;k++) if(LECTURES[k].id===parts[0] && LECTURES[k].scenes) L=LECTURES[k];
   if(!L) return renderMenu();
   if(parts[1]==='kraj') return renderEnd(L);
   var i=parseInt((parts[1]||'s1').slice(1),10)-1;
   if(isNaN(i)||i<0||i>=L.scenes.length) i=0;
-  if(!isUnlocked(L,i)){ i=firstOpen(L); history.replaceState(null,'','#/'+L.id+'/s'+(i+1)); }
+  if(!isUnlocked(L,i)){ i=firstOpen(L); try{ history.replaceState(null,'','#'+L.id+'-s'+(i+1)); }catch(e){} }
   renderScene(L,i);
 }
 window.addEventListener('hashchange',route);
