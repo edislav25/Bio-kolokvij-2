@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biologija 2 – videopredavanja</title>
+<meta name="description" content="Interaktivna videopredavanja iz Biologije (2. kolokvij) s animiranim dijagramima, pripovijedanjem i pitanjima.">
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --ink:#1d1b18; --muted:#615c54; --line:#e2ddd2;
+  --accent:#0f766e; --accentInk:#ffffff; --soft:#eef6f4;
+  --dna1:#3b82f6; --dna2:#1e3a8a; --rna:#ea580c; --enz:#16a34a; --tf:#7c3aed; --tfFill:#7c3aed;
+  --sn:#0d9488; --snFill:#0f766e; --cap:#db2777; --capFill:#be185d; --hl:#dc2626; --el:#d97706;
+  --mir:#c026d3; --histone:#a8a29e; --exFill:#ea580c; --intron:#c2a58a; --ph:#eab308;
+  --ok:#15803d; --okBg:#e8f6ec; --bad:#b91c1c; --badBg:#fdecec; --addBg:#fff8e6; --addLine:#d9a400;
+  --svgbg:#ffffff; --cell:#f3efe6;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#13120f; --card:#1e1c18; --ink:#f2eee6; --muted:#b0a99d; --line:#363129;
+    --accent:#2dd4bf; --accentInk:#0b1a18; --soft:#16302c;
+    --dna1:#7dd3fc; --dna2:#3b82f6; --rna:#fb923c; --enz:#4ade80; --tf:#a78bfa; --tfFill:#6d28d9;
+    --sn:#2dd4bf; --snFill:#0f766e; --cap:#f472b6; --capFill:#be185d; --hl:#f87171; --el:#fbbf24;
+    --mir:#e879f9; --histone:#78716c; --exFill:#c2410c; --intron:#8a7462; --ph:#facc15;
+    --ok:#4ade80; --okBg:#12301d; --bad:#fca5a5; --badBg:#3a1616; --addBg:#2d2610; --addLine:#d9a400;
+    --svgbg:#1e1c18; --cell:#26231e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#13120f; --card:#1e1c18; --ink:#f2eee6; --muted:#b0a99d; --line:#363129;
+  --accent:#2dd4bf; --accentInk:#0b1a18; --soft:#16302c;
+  --dna1:#7dd3fc; --dna2:#3b82f6; --rna:#fb923c; --enz:#4ade80; --tf:#a78bfa; --tfFill:#6d28d9;
+  --sn:#2dd4bf; --snFill:#0f766e; --cap:#f472b6; --capFill:#be185d; --hl:#f87171; --el:#fbbf24;
+  --mir:#e879f9; --histone:#78716c; --exFill:#c2410c; --intron:#8a7462; --ph:#facc15;
+  --ok:#4ade80; --okBg:#12301d; --bad:#fca5a5; --badBg:#3a1616; --addBg:#2d2610; --addLine:#d9a400;
+  --svgbg:#1e1c18; --cell:#26231e;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;overflow-x:hidden}
+button{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 48px}
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top .in{max-width:560px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;gap:8px}
+header.top h1{font-size:17px;margin:0;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{min-width:44px;min-height:44px;border:1px solid var(--line);background:var(--card);border-radius:12px;cursor:pointer;padding:0 10px}
+.btn{min-height:46px;border:0;border-radius:12px;padding:0 16px;background:var(--accent);color:var(--accentInk);font-weight:650;cursor:pointer}
+.btn.sec{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:12px 0}
+.muted{color:var(--muted)}
+h2{font-size:21px;line-height:1.25;margin:14px 0 6px}
+h3{font-size:18px;margin:6px 0}
+.lec{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit}
+.lec .num{flex:none;width:52px;height:52px;border-radius:14px;background:var(--soft);display:grid;place-items:center;font-weight:800;color:var(--accent)}
+.lec.dis{opacity:.55}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-width:40px;height:40px;border-radius:20px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;font-weight:700;text-decoration:none;color:inherit;padding:0 10px;font-size:15px}
+.chip.cur{background:var(--accent);color:var(--accentInk);border-color:var(--accent)}
+.chip.done{border-color:var(--ok);color:var(--ok)}
+.chip.cur.done{color:var(--accentInk)}
+.chip.lock{opacity:.4;pointer-events:none}
+.stage{background:var(--svgbg);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:14px;color:var(--muted);margin:8px 2px 0}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{display:inline-block;width:18px;height:6px;border-radius:3px}
+.dots{display:flex;gap:6px;justify-content:center;margin:12px 0 4px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.txt{min-height:150px;transition:opacity .25s}
+.txt.fade{opacity:.15}
+.txt p{margin:.3em 0 .6em}
+.add{display:block;background:var(--addBg);border-left:4px solid var(--addLine);padding:8px 10px;border-radius:8px;margin:8px 0;font-size:16px}
+.mn{display:block;background:var(--soft);border-radius:10px;padding:8px 10px;margin:8px 0;font-size:16px}
+.ctrl{display:grid;grid-template-columns:1fr 1.25fr auto 1fr;gap:8px;margin-top:8px}
+.ctrl .btn{padding:0 6px;white-space:nowrap;font-size:15px}
+.note{font-size:14px;color:var(--muted);margin-top:8px}
+.q .opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);cursor:pointer;min-height:48px}
+.q .opt.ok{border-color:var(--ok);background:var(--okBg)}
+.q .opt.bad{border-color:var(--bad);background:var(--badBg)}
+.q .opt:disabled{cursor:default}
+.fb{border-radius:12px;padding:10px 12px;margin-top:8px;font-size:16px}
+.fb.ok{background:var(--okBg);border:1px solid var(--ok)}
+.fb.bad{background:var(--badBg);border:1px solid var(--bad)}
+.q input{width:100%;min-height:48px;font:inherit;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.row .btn{flex:1}
+.hidden{display:none !important}
+ul.sum{padding-left:20px} ul.sum li{margin:6px 0}
+.score{font-size:22px;font-weight:800}
+/* SVG */
+.l{fill:var(--ink);font-size:12px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.s{font-size:10.5px}.b{font-weight:700}.w{fill:#fff}.m{fill:var(--muted)}
+.cR{fill:var(--rna)}.cB{fill:var(--dna1)}.cB2{fill:var(--dna2)}.cG{fill:var(--enz)}.cP{fill:var(--tf)}.cH{fill:var(--hl)}.cT{fill:var(--sn)}.cK{fill:var(--cap)}.cM{fill:var(--mir)}
+.cd{stroke:var(--dna1);stroke-width:4;fill:none;stroke-linecap:round}
+.ct{stroke:var(--dna2);stroke-width:4;fill:none;stroke-linecap:round}
+.rn{stroke:var(--rna);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.intr{stroke:var(--intron);stroke-width:4;fill:none;stroke-linecap:round}
+.gr{stroke:var(--muted);stroke-width:1.2;opacity:.55}
+.ez{fill:var(--enz);fill-opacity:.28;stroke:var(--enz);stroke-width:2}
+.tff{fill:var(--tfFill)}
+.snf{fill:var(--snFill)}
+.cpf{fill:var(--capFill)}
+.exf{fill:var(--exFill)}
+.hlb{fill:var(--hl);fill-opacity:.28;stroke:var(--hl);stroke-width:1.5}
+.elb{fill:var(--el);fill-opacity:.35;stroke:var(--el);stroke-width:1.5}
+.cell{fill:var(--cell);stroke:var(--muted);stroke-width:1.5}
+.nuc{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:6 4}
+.ribo{fill:var(--histone);stroke:var(--muted);stroke-width:1}
+.hist{fill:var(--histone)}
+.ak{stroke:var(--ink);stroke-width:1.8;fill:none;marker-end:url(#aK)}
+.cut{stroke:var(--hl);stroke-width:3;stroke-linecap:round}
+.mask{fill:var(--svgbg)}
+.bx{fill:var(--card);stroke-width:2}
+svg [data-s],svg [data-anim]{transition:opacity .7s ease,transform 1.1s ease,stroke-dashoffset 1.6s ease}
+svg .off{opacity:0 !important}
+.on .drift,.drift.on{animation:drift 3.2s ease forwards}
+@keyframes drift{0%,35%{transform:translate(0,0);opacity:1}100%{transform:translate(18px,-28px);opacity:.15}}
+.on .pulse,.pulse.on{animation:pulse 1.6s ease-in-out 3}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion: reduce){svg [data-s],svg [data-anim]{transition:none}.on .drift,.drift.on,.on .pulse,.pulse.on{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="aK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--ink)"/></marker>
+    <marker id="aR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--rna)"/></marker>
+    <marker id="aB" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="8" markerHeight="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--dna1)"/></marker>
+  </defs>
+</svg>
+<header class="top"><div class="in">
+  <button class="ib" id="homeBtn" aria-label="Izbornik">☰</button>
+  <h1 id="ttl">Biologija 2</h1>
+  <button class="ib" id="themeBtn" aria-label="Promijeni temu">🌓</button>
+</div></header>
+<main class="wrap" id="app"></main>
+
+<script>
+"use strict";
+/* ================= POHRANA ================= */
+var LS_KEY = 'bioVP.v1';
+function loadState(){ try{ var s = JSON.parse(localStorage.getItem(LS_KEY)); return (s && typeof s === 'object') ? s : {}; }catch(e){ return {}; } }
+var state = Object.assign({ scenes:{}, quiz:{}, rate:1, theme:null }, loadState());
+if(!state.scenes || typeof state.scenes !== 'object') state.scenes = {};
+if(!state.quiz || typeof state.quiz !== 'object') state.quiz = {};
+function saveState(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){} }
+
+/* ================= SVG POMOĆNICI ================= */
+function t(x,y,s,c,a){ return '<text x="'+x+'" y="'+y+'" class="l '+(c||'')+'" text-anchor="'+(a||'middle')+'">'+s+'</text>'; }
+function g(s,anim,inner,cls){ if(arguments.length>4||(cls&&cls.indexOf('<')>=0)) console.error('g(): krivi argumenti '+(new Error().stack||'').split('\n')[2]); return '<g'+(s!=null?' data-s="'+s+'"':'')+(anim?' data-anim="'+anim+'"':'')+(cls?' class="'+cls+'"':'')+'>'+inner+'</g>'; }
+function svg(){ return '<svg viewBox="0 0 360 240" role="img" aria-label="Animirani dijagram">'+Array.prototype.join.call(arguments,'')+'</svg>'; }
+function ticks(x1,x2,step,y1,y2){ var o=''; for(var x=x1;x<=x2;x+=step) o+='<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" class="gr"/>'; return o; }
+function cap(i,s){ return g(i+'-'+i,null,t(180,233,s,'b')); }
+
+/* ================= SADRŽAJ: P16/17 ================= */
+var P16 = {
+ id:'p16', code:'P16/17', title:'Transkripcija i obrada mRNA',
+ scenes:[
+ /* ---------- SCENA 1 ---------- */
+ { title:'Što je transkripcija? Prokarioti vs. eukarioti',
+   legend:['dna1','dna2','rna','enz'],
+   svg: svg(
+     /* dogma */
+     '<rect x="15" y="10" width="70" height="30" rx="8" class="bx" style="stroke:var(--dna1)"/>'+t(50,30,'DNA','b cB')+
+     '<rect x="145" y="10" width="70" height="30" rx="8" class="bx" style="stroke:var(--rna)"/>'+t(180,30,'RNA','b cR')+
+     '<rect x="275" y="10" width="70" height="30" rx="8" class="bx" style="stroke:var(--enz)"/>'+t(310,30,'protein','b cG')+
+     '<line x1="88" y1="25" x2="140" y2="25" class="ak"/><line x1="218" y1="25" x2="270" y2="25" class="ak"/>'+
+     '<rect x="76" y="44" width="78" height="14" rx="4" class="hlb" style="stroke:none"/>'+t(115,55,'transkripcija','s b')+t(245,55,'translacija','s')+
+     /* step 0 */
+     g('0-0',null,
+       t(180,95,'jednosmjerni protok genetičke informacije','b')+
+       '<rect x="120" y="140" width="120" height="26" rx="4" class="hlb" style="stroke:none"/>'+t(180,134,'gen')+
+       '<line x1="40" y1="148" x2="320" y2="148" class="cd"/><line x1="40" y1="158" x2="320" y2="158" class="ct"/>'+
+       '<line x1="180" y1="172" x2="180" y2="198" class="ak"/>'+t(190,190,'transkripcija','s','start')+
+       '<line x1="120" y1="212" x2="240" y2="212" class="rn"/>'+t(250,216,'RNA (kopija gena)','s cR','start')),
+     /* step 1 */
+     g('1-1',null,
+       t(20,82,'kodirajući lanac 5′→3′','s b cB','start')+
+       '<path class="cd" d="M20 100 L120 100 Q180 66 240 100 L340 100"/>'+
+       '<path class="ct" d="M20 160 L120 160 Q180 186 240 160 L340 160"/>'+
+       ticks(28,112,12,102,158)+ticks(252,336,12,102,158)+
+       t(10,104,'5′','s b')+t(350,104,'3′','s b')+t(10,164,'3′','s b')+t(350,164,'5′','s b')+
+       '<ellipse class="ez" cx="180" cy="130" rx="62" ry="44"/>'+
+       '<path class="rn" d="M150 62 Q150 140 172 146 L216 146" marker-end="url(#aR)"/>'+t(146,58,'5′','s b cR','end')+t(226,140,'3′','s b cR','start')+
+       t(300,84,'RNA raste 5′→3′','s b cR')+
+       t(20,186,'kalup lanac (čita se 3′→5′)','s b cB2','start')+t(300,200,'RNA polimeraza','s b cG')),
+     /* step 2 */
+     g('2-2',null,
+       '<rect x="12" y="64" width="336" height="170" rx="28" class="cell"/>'+t(180,84,'PROKARIOT: sve u citoplazmi, istodobno','b')+
+       '<rect x="60" y="100" width="70" height="19" rx="3" class="hlb" style="stroke:none"/><rect x="140" y="100" width="70" height="19" rx="3" class="elb" style="stroke:none"/><rect x="220" y="100" width="70" height="19" rx="3" class="hlb" style="stroke:none"/>'+
+       t(95,97,'gen A','s')+t(175,97,'gen B','s')+t(255,97,'gen C','s')+
+       '<line x1="40" y1="106" x2="320" y2="106" class="cd" style="stroke-width:3"/><line x1="40" y1="113" x2="320" y2="113" class="ct" style="stroke-width:3"/>'+
+       '<path class="rn" d="M62 118 Q62 150 92 152 L300 152" marker-end="url(#aR)"/>'+
+       '<ellipse class="ribo" cx="130" cy="150" rx="16" ry="11"/><ellipse class="ribo" cx="190" cy="150" rx="16" ry="11"/><ellipse class="ribo" cx="250" cy="150" rx="16" ry="11"/>'+
+       t(180,182,'policistronska mRNA (A + B + C)','s b cR')+t(180,200,'ribosomi prevode dok se mRNA još prepisuje','s')+t(180,218,'gotovo nikakva dorada','s m')),
+     /* step 3 */
+     g('3-3',null,
+       '<rect x="12" y="64" width="336" height="170" rx="28" class="cell"/>'+
+       '<ellipse class="nuc" cx="110" cy="150" rx="88" ry="68"/>'+t(110,102,'JEZGRA','b')+t(110,116,'transkripcija + dorada','s')+
+       '<line x1="40" y1="130" x2="180" y2="130" class="cd" style="stroke-width:3"/><line x1="40" y1="136" x2="180" y2="136" class="ct" style="stroke-width:3"/>'+
+       '<path class="rn" d="M60 156 L160 156" style="stroke-width:3"/>'+t(110,172,'pre-mRNA','s cR')+
+       '<line x1="110" y1="176" x2="110" y2="190" class="ak"/>'+
+       '<circle cx="74" cy="200" r="5" class="cpf"/><path class="rn" d="M80 200 L140 200" style="stroke-width:3"/>'+t(146,204,'AAA','s cK b','start')+
+       '<line x1="170" y1="196" x2="238" y2="170" class="ak"/>'+
+       t(290,96,'CITOPLAZMA','b')+t(290,110,'translacija','s')+
+       '<path class="rn" d="M245 160 L335 160" style="stroke-width:3"/><ellipse class="ribo" cx="288" cy="158" rx="16" ry="11"/>'+
+       t(285,198,'monocistronska:','s b')+t(285,213,'1 gen → 1 mRNA → 1 protein','s'))
+   ),
+   steps:[
+     {html:'<p>☕ Sjedni, imam trač iz stanice! Genetička informacija putuje <b>samo u jednom smjeru</b>: <b>DNA → RNA → protein</b>. To je <b>središnja (centralna) dogma molekularne biologije</b>.</p><p>Prvi korak (DNA → RNA) je <b>transkripcija</b> 📝, a drugi (RNA → protein) <b>translacija</b>. Dakle, transkripcija je <b>prvi korak u ekspresiji gena</b>.</p><span class="mn">🧠 Mnemonik: trans-<b>KRIP</b>-cija = <b>prepisivanje</b> (iz DNA u RNA), trans-<b>LACIJA</b> = <b>prevođenje</b> (iz RNA u protein).</span>'},
+     {html:'<p>🔍 <b>Transkripcija je sinteza RNA</b>: nastaje <b>jednolančana RNA</b> komplementarna <b>jednom</b> lancu dvostruke DNA uzvojnice.</p><p>Taj lanac je <b>kalup lanac</b> (nekodirajući) i čita se <b>3′→5′</b>. Drugi je <b>kodirajući lanac</b> (5′→3′): ima <b>isti slijed kao nastala RNA</b>, samo što DNA ima <b>T</b> tamo gdje RNA ima <b>U</b>.</p><p>RNA se sintetizira <b>5′→3′</b> – nukleotidi se dodaju na <b>3′ kraj</b> rastućeg lanca. 🧵</p><span class="mn">🧠 Kodirajući lanac je „blizanac” RNA 👯, a kalup lanac je „kalup za kolače” – obrnut i komplementaran.</span>'},
+     {html:'<p>🦠 <b>Prokarioti</b>: <b>transkripcija i translacija</b> odvijaju se <b>u istom odjeljku (citoplazmi) i istodobno</b>! Ribosomi se hvataju za mRNA dok se ona još prepisuje.</p><p>Dorade <b>gotovo nema</b> – mRNA se prevodi <b>odmah, još tijekom transkripcije</b>. mRNA je često <b>policistronska</b>: prepisana s <b>više susjednih gena</b>, kodira <b>više proteina</b>. 📦 Paket-aranžman!</p>'},
+     {html:'<p>🏛️ <b>Eukarioti</b> su birokrati: <b>transkripcija u jezgri</b>, <b>translacija u citoplazmi</b> – <b>prostorno i vremenski odvojene</b>.</p><p>Prvo nastaje <b>primarni transkript (pre-mRNA)</b> koji se <b>dorađuje</b>: <b>kapa</b>, <b>poli-A rep</b> i <b>izrezivanje introna</b>. mRNA je <b>monocistronska</b>: 1 gen → 1 mRNA → 1 protein.</p><span class="mn">🧠 <b>POLI</b>cistronska = <b>PRO</b>karioti (puno gena u paketu) · <b>MONO</b>cistronska = eukarioti (svaki gen svoja mRNA).</span>'}
+   ],
+   q:{ type:'mc', text:'Gdje se u <b>eukariotskoj</b> stanici odvijaju transkripcija i translacija?',
+     opts:[
+       {t:'Obje istodobno u citoplazmi', why:'To je opis <b>prokariota</b> – kod njih su transkripcija i translacija u istom odjeljku i istodobno.'},
+       {t:'Transkripcija u jezgri, translacija u citoplazmi', ok:true, why:'Točno! Kod eukariota su prostorno i vremenski odvojene, a između njih se u jezgri dorađuje pre-mRNA.'},
+       {t:'Obje u jezgri', why:'U jezgri se odvija transkripcija (i dorada pre-mRNA), ali <b>translacija je u citoplazmi</b>.'},
+       {t:'Transkripcija u citoplazmi, translacija u jezgri', why:'Obrnuto! DNA je u jezgri pa se tamo i prepisuje; prevodi se u citoplazmi.'}
+     ]}
+ },
+ /* ---------- SCENA 2 ---------- */
+ { title:'Transkripcija u prokariota (σ, −10/−35, ukosnica)',
+   legend:['dna1','dna2','rna','enz','tf','hl'],
+   svg: svg(
+     /* DNA */
+     '<line x1="15" y1="110" x2="345" y2="110" class="cd"/><line x1="15" y1="140" x2="345" y2="140" class="ct"/>'+
+     t(7,114,'5′','s b')+t(353,114,'3′','s b')+t(7,144,'3′','s b')+t(353,144,'5′','s b')+
+     ticks(20,340,10,113,137)+
+     /* step 0 regije */
+     g('0-0',null,
+       '<rect x="25" y="150" width="100" height="8" rx="3" style="fill:var(--el)"/><rect x="130" y="150" width="155" height="8" rx="3" style="fill:var(--rna);opacity:.7"/><rect x="290" y="150" width="50" height="8" rx="3" style="fill:var(--hl)"/>'+
+       t(75,175,'promotor','s b')+t(208,175,'RNA-kodirajuća regija','s b')+t(315,175,'terminator','s b')+
+       t(60,196,'← uzvodno','s m')+t(300,196,'nizvodno →','s m')),
+     '<line x1="130" y1="96" x2="130" y2="146" style="stroke:var(--ink);stroke-dasharray:3 3;stroke-width:1.5"/>'+t(130,92,'+1','s b')+
+     /* -35 / -10 */
+     g('1',null,'<rect x="45" y="103" width="22" height="44" rx="3" class="hlb"/><rect x="92" y="103" width="22" height="44" rx="3" class="hlb"/>'+t(56,98,'−35','s b cH')+t(103,98,'−10','s b cH')),
+     /* terminator */
+     g('5',null,'<rect x="262" y="103" width="30" height="44" rx="3" class="hlb"/><rect x="300" y="133" width="38" height="14" rx="3" class="elb"/>'+t(277,165,'GC','s b cH')+t(319,165,'AAAA','s b')+t(319,178,'(kalup)','s m')),
+     /* mjehur */
+     g(null,'-1:opacity=0;2:opacity=1;4:transform=translate(100px,0px);5:transform=translate(170px,0px)|opacity=0',
+       '<rect x="112" y="105" width="40" height="40" class="mask"/>'+
+       '<path class="cd" d="M108 110 Q132 86 156 110"/><path class="ct" d="M108 140 Q132 164 156 140"/>'),
+     /* RNA kratka */
+     g('2-3',null,'<path class="rn" d="M128 127 L142 127" marker-end="url(#aR)"/>'),
+     /* RNA elongacija */
+     g('4-4',null,'<path class="rn" d="M176 62 Q192 72 204 98 Q214 126 240 128" marker-end="url(#aR)"/>'+t(171,60,'5′','s b cR','end')+t(270,62,'RNA raste 5′→3′','s b cR')),
+     /* polimeraza */
+     g(null,'-1:opacity=0|transform=translate(0px,-50px);1:opacity=1|transform=translate(0px,0px);4:transform=translate(100px,0px);5:transform=translate(190px,0px)|opacity=0',
+       '<ellipse class="ez" cx="130" cy="125" rx="46" ry="34"/>'+t(150,178,'srž (5 podjedinica)','s b cG','start')),
+     /* sigma */
+     g(null,'-1:opacity=0|transform=translate(0px,40px);1:opacity=1|transform=translate(0px,0px);3:opacity=0|transform=translate(-40px,50px)',
+       '<rect x="45" y="150" width="70" height="20" rx="10" class="tff"/>'+t(80,164,'σ (sigma)','s b w')),
+     /* ukosnica */
+     g('5',null,'<path class="rn" d="M40 70 L228 70 L228 40 A10 10 0 0 1 248 40 L248 70 L300 70"/>'+
+       '<line x1="231" y1="46" x2="245" y2="46" class="gr"/><line x1="231" y1="55" x2="245" y2="55" class="gr"/><line x1="231" y1="64" x2="245" y2="64" class="gr"/>'+
+       t(33,74,'5′','s b cR','end')+t(238,22,'ukosnica (omča)','s b cR')+t(276,63,'UUUU','s cR')+t(140,62,'RNA se odvaja od kalupa','s')),
+     cap(0,'transkripcijska jedinica')+cap(1,'zatvoreni kompleks promotora')+cap(2,'otvoreni kompleks: DNA odmotana oko +1')+
+     cap(3,'σ se može odvojiti od srži')+cap(4,'elongacija: mjehur ~15 bp putuje →')+cap(5,'terminacija: ukosnica → RNA odlazi')
+   ),
+   steps:[
+     {html:'<p>🧱 Prvo osnovni pojmovi. <b>Transkripcijska jedinica</b> je dio DNA koji kodira <b>jednu RNA molekulu</b>. Ima tri dijela: <b>promotor</b> → <b>RNA-kodirajuća regija</b> → <b>terminator</b>.</p><p><b>Promotor</b> (100–1000 pb) sjedi <b>uzvodno (upstream)</b> od gena, blizu startnog mjesta <b>+1</b> – tu se veže RNA polimeraza. <b>Terminator</b> (20–200 pb) označava <b>kraj gena</b> i vodi do odvajanja RNA od kalupa.</p><span class="mn">🧠 P-R-T: „<b>P</b>očni, <b>R</b>adi, <b>T</b>očka.”</span>'},
+     {html:'<p>🧲 Prokarioti imaju <b>jednu RNA polimerazu za sve vrste RNA</b>. U <i>E. coli</i> ona ima <b>šest podjedinica</b>: <b>pet čini srž (core)</b> s katalitičkom aktivnošću, a šesta je <b>σ (sigma)</b> – <b>slabo vezana</b>, ali <b>nužna za prepoznavanje promotora</b>.</p><p>σ se veže na sljedove <b>−10 i −35</b> (broj parova baza uzvodno od +1). Polimeraza sjedi na DNA, ali je DNA još zatvorena: to je <b>zatvoreni kompleks promotora</b> 🔒.</p><span class="mn">🧠 σ = <b>S</b>igurna navigacija 🧭 – bez nje srž ne zna gdje stati.</span>'},
+     {html:'<p>🔓 Vezanjem σ na −10 i −35 DNA se <b>odmotava oko mjesta inicijacije</b> → nastaje <b>otvoreni kompleks promotora</b>. Sad <b>započinje sinteza RNA</b> od mjesta +1.</p><p>Bitno: RNA polimeraza, za razliku od DNA polimeraze, <b>ne treba početnicu</b> 💪. Dodaje <b>ribonukleozid-5′-trifosfate (rNTP)</b> prema pravilu komplementarnosti baza.</p>'},
+     {html:'<p>👋 σ podjedinica je <b>slabo vezana i može se odvojiti</b> od srži. Time završava <b>inicijacija</b> – prva od tri faze: <b>inicijacija, elongacija, terminacija</b>.</p><span class="add">➕ <b>Dodatno objašnjenje</b> (nije u skripti): nakon što sinteza RNA krene, σ se obično odvoji, a srž nastavlja sama.</span>'},
+     {html:'<p>🚂 <b>Elongacija</b>: RNA polimeraza se pomiče duž DNA i <b>produljuje lanac RNA</b> (5′→3′). Ispred sebe <b>odmotava</b> DNA, a iza sebe je <b>ponovno zamata</b>.</p><p>Zato odmotano područje – <b>transkripcijski mjehur</b> 🫧 – ostaje veličine <b>oko 15 bp</b>. Kao patentni zatvarač koji je otvoren samo oko klizača!</p>'},
+     {html:'<p>🛑 <b>Terminacija</b>: signal su <b>obrnuta ponavljanja bogata GC-parovima</b>, iza kojih slijedi <b>niz A (na kalup lancu)</b>.</p><p>Kad se prepišu, obrnuta ponavljanja u RNA <b>sparuju se međusobno</b> i stvaraju <b>omču – ukosnicu (hairpin)</b> 💇. Ukosnica uzrokuje <b>odvajanje RNA od DNA kalupa</b>.</p><span class="mn">🧠 GC-ukosnica = „<b>G</b>otovo, <b>C</b>iao!” 👋</span>'}
+   ],
+   q:{ type:'mc', text:'Koja podjedinica prokariotske RNA polimeraze prepoznaje promotor (sljedove −10 i −35)?',
+     opts:[
+       {t:'Srž (core) od pet podjedinica', why:'Srž ima <b>katalitičku aktivnost</b> (sintetizira RNA), ali sama ne prepoznaje ispravno inicijacijsko mjesto.'},
+       {t:'σ (sigma) podjedinica', ok:true, why:'Točno! σ je slabo vezana, ali nužna za prepoznavanje promotora – veže se na −10 i −35.'},
+       {t:'TBP (TATA-vezujući protein)', why:'TBP je <b>eukariotski</b> – podjedinica TFIID koja se veže na TATA-slog.'},
+       {t:'Početnica', why:'RNA polimeraza <b>ne treba početnicu</b>, a početnica ionako nije podjedinica enzima.'}
+     ]}
+ },
+ /* ---------- SCENA 3 ---------- */
+ { title:'Eukariotske RNA polimeraze i promotor',
+   legend:['dna1','enz','tf','hl','el'],
+   svg: svg(
+     g('0-0',null,
+       t(180,40,'KROMATIN','b')+
+       '<polyline points="10,100 60,120 120,140 180,120 240,140 300,120 350,100" style="fill:none;stroke:var(--dna1);stroke-width:4"/>'+
+       [[60,120],[120,140],[180,120],[240,140],[300,120]].map(function(p){return '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="18" class="hist"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="21" style="fill:none;stroke:var(--dna1);stroke-width:4;stroke-dasharray:50 12"/>';}).join('')+
+       '<ellipse class="ez" cx="300" cy="62" rx="34" ry="16"/>'+t(300,66,'RNA pol.','s b cG')+t(250,66,'?','b','end')+
+       t(180,190,'DNA je zapakirana u kromatin','s b')+t(180,206,'→ dostupnost kalupa je ograničena','s')),
+     g('1-1',null,
+       t(180,32,'eukariotske RNA polimeraze (12–17 podjedinica)','s b')+
+       '<ellipse class="ez" cx="55" cy="70" rx="40" ry="17"/>'+t(55,74,'Pol I','b cG')+'<line x1="98" y1="70" x2="135" y2="70" class="ak"/>'+t(142,74,'rRNA 5.8S, 18S, 28S','','start')+
+       '<ellipse class="ez" cx="55" cy="118" rx="40" ry="17"/>'+t(55,122,'Pol II','b cG')+'<line x1="98" y1="118" x2="135" y2="118" class="ak"/>'+t(142,122,'mRNA, miRNA, lncRNA','','start')+
+       '<ellipse class="ez" cx="55" cy="166" rx="40" ry="17"/>'+t(55,170,'Pol III','b cG')+'<line x1="98" y1="166" x2="135" y2="166" class="ak"/>'+t(142,170,'tRNA i rRNA <tspan class="cH b">5S</tspan>','','start')+
+       g(null,null,t(236,170,'← zamka!','s b cH','start'),'pulse')+
+       t(180,214,'mitohondrij i kloroplast: vlastite polimeraze','s m')),
+     g('2-3',null,
+       '<line x1="15" y1="140" x2="345" y2="140" class="cd" style="stroke-width:3"/><line x1="15" y1="148" x2="345" y2="148" class="ct" style="stroke-width:3"/>'+
+       t(8,138,'5′','s b')+t(352,138,'3′','s b')+
+       '<rect x="60" y="134" width="28" height="20" rx="3" class="elb"/><rect x="104" y="134" width="24" height="20" rx="3" class="elb"/>'+
+       '<rect x="170" y="134" width="36" height="20" rx="3" class="hlb"/>'+
+       '<rect x="222" y="134" width="28" height="20" rx="3" style="fill:var(--rna);fill-opacity:.35;stroke:var(--rna)"/>'+
+       '<rect x="285" y="134" width="26" height="20" rx="3" class="elb"/>'+
+       '<path d="M236 132 L236 100 L278 100" class="ak"/>'+t(236,94,'+1','s b')+
+       t(188,110,'TATA-slog','s b cH')+t(188,124,'≈ −25 do −30','s')),
+     g('2-2',null, t(95,172,'uzvodni elementi','s')+t(236,172,'Inr (obuhvaća +1)','s b cR')+t(298,188,'nizvodni','s')+t(180,222,'TATA ima samo ~30 % promotora Pol II','s b')),
+     g('3-3',null,
+       '<rect x="22" y="134" width="26" height="20" rx="3" style="fill:var(--mir);fill-opacity:.4;stroke:var(--mir)"/>'+t(35,124,'pojačivač','s b cM')+
+       '<ellipse cx="35" cy="172" rx="30" ry="13" style="fill:var(--mir)"/>'+t(35,176,'spec. TF','s b w')+
+       '<ellipse cx="212" cy="172" rx="62" ry="15" class="tff"/>'+t(212,176,'opći TF (TFII…)','s b w')+
+       t(180,214,'~10 % ljudskog genoma kodira TF','s b'))
+   ),
+   steps:[
+     {html:'<p>🧶 Kod eukariota je sve <b>složenije</b>. Faze su iste (inicijacija – s <b>preinicijacijskim kompleksom</b>, elongacija, terminacija), a glavni čimbenici su: <b>promotor/DNA</b>, <b>RNA polimeraze</b>, <b>proteini (transkripcijski faktori)</b> i <b>kromatinska struktura</b>.</p><p>DNA je zapakirana u <b>kromatin</b>, pa je <b>dostupnost kalupa ograničena</b> 🔐 – polimeraza ne može samo tako sjesti gdje hoće.</p>'},
+     {html:'<p>👯 Eukarioti imaju <b>različite RNA polimeraze za različite vrste RNA</b> – enzime od <b>12–17 podjedinica</b> koji prepoznaju različite promotore.</p><p><b>Pol I</b> → rRNA <b>5.8S, 18S, 28S</b>. <b>Pol II</b> → <b>mRNA, miRNA, lncRNA</b>. <b>Pol III</b> → <b>tRNA</b> i <b>rRNA 5S</b>. Mitohondrijski geni i geni kloroplasta imaju <b>svoje</b> polimeraze.</p><span class="mn">🧠 I-II-III = <b>R-M-T</b> → „<b>R</b>ijeka <b>M</b>i <b>T</b>reba” (rRNA, mRNA, tRNA). ⚠️ Zamka: <b>5S rRNA radi Pol III</b>, ne Pol I!</span>'},
+     {html:'<p>📍 <b>Promotor</b> = DNA koja neposredno okružuje početno mjesto transkripcije. Elementi:</p><p>• <b>TATA-slog (TATAA)</b>: oko <b>25–30 nukleotida uzvodno</b> od +1; <b>cis-regulatorni element</b>, prvi otkriven, ali ga ima najviše oko <b>30 % promotora Pol II</b>.<br>• <b>Inr elementi</b>: obuhvaćaju <b>mjesto početka</b> transkripcije.<br>• još nekoliko <b>uzvodnih i nizvodnih</b> elemenata.</p><p>Različiti geni = <b>različite kombinacije</b> elemenata. 🎛️</p>'},
+     {html:'<p>🗣️ <b>Transkripcijski faktori (TF)</b> – oko <b>10 % ljudskog genoma</b> kodira njih!</p><p>• <b>Opći TF</b> (<b>TFIID, TFIIB, TFIIF, TFIIE, TFIIH</b>): vežu se na promotor, <b>nužni</b> su Pol II za početak i aktivni na <b>svim</b> promotorima Pol II.<br>• <b>Specifični TF</b>: vežu se na <b>pojačivače i utišivače</b> (i promotore) <b>pojedinih gena</b> i kontroliraju njihovu ekspresiju.</p><span class="mn">🧠 Opći TF = „osnovna oprema” svakog gena · specifični TF = „VIP pozivnica” samo za neke gene.</span>'}
+   ],
+   q:{ type:'mc', text:'Koja RNA polimeraza prepisuje gen za <b>5S rRNA</b>?',
+     opts:[
+       {t:'RNA polimeraza I', why:'Pol I prepisuje rRNA <b>5.8S, 18S i 28S</b> – 5S je iznimka!'},
+       {t:'RNA polimeraza II', why:'Pol II prepisuje <b>mRNA, miRNA i lncRNA</b>.'},
+       {t:'RNA polimeraza III', ok:true, why:'Točno! Pol III prepisuje <b>tRNA i 5S rRNA</b>.'},
+       {t:'Mitohondrijska polimeraza', why:'Ona prepisuje samo <b>mitohondrijske gene</b>.'}
+     ]}
+ },
+ /* ---------- SCENA 4 ---------- */
+ { title:'Opći faktori, preinicijacijski kompleks, Mediator, terminacija',
+   legend:['dna1','rna','enz','tf','hl'],
+   svg: svg(
+     g('0-4',null,
+       '<line x1="10" y1="186" x2="350" y2="186" class="cd" style="stroke-width:3"/><line x1="10" y1="194" x2="350" y2="194" class="ct" style="stroke-width:3"/>'+
+       '<rect x="80" y="181" width="36" height="18" rx="3" class="hlb"/>'+t(98,214,'TATA','s b cH')+
+       '<line x1="170" y1="178" x2="170" y2="202" style="stroke:var(--ink);stroke-dasharray:3 3"/>'+t(170,214,'+1','s b')+
+       /* bubble at step 4 */
+       g('4-4',null,'<rect x="158" y="182" width="40" height="16" class="mask"/><path class="cd" d="M154 186 Q178 168 202 186" style="stroke-width:3"/><path class="ct" d="M154 194 Q178 212 202 194" style="stroke-width:3"/>')+
+       /* TFIID */
+       g(null,'-1:transform=translate(0px,-70px)|opacity=0;0:transform=translate(0px,0px)|opacity=1',
+         '<path d="M76 181 Q98 156 120 181 L120 170 Q98 146 76 170 Z" class="tff"/>'+
+         '<circle cx="76" cy="150" r="12" class="tff" style="opacity:.6"/><circle cx="100" cy="140" r="12" class="tff" style="opacity:.6"/><circle cx="122" cy="152" r="10" class="tff" style="opacity:.6"/>'+
+         t(98,170,'TBP','s b w')+t(100,144,'TAF','s w')+t(98,118,'TFIID','s b cP'))+
+       /* TFIIB */
+       g('1',"-1:transform=translate(0px,-50px);1:transform=translate(0px,0px)",'<circle cx="136" cy="168" r="12" class="tff"/>'+t(136,172,'B','s b w'))+
+       /* Pol II + F + CTD */
+       g('1',"-1:transform=translate(170px,0px);1:transform=translate(0px,0px)",
+         '<path d="M232 136 Q246 124 240 114 Q234 104 248 98 Q258 92 252 84" style="fill:none;stroke:var(--enz);stroke-width:4;stroke-linecap:round"/>'+t(266,110,'CTD','s b cG','start')+
+         '<ellipse class="ez" cx="200" cy="162" rx="50" ry="30"/>'+t(206,160,'RNA pol II','s b cG')+
+         '<circle cx="164" cy="140" r="11" class="tff"/>'+t(164,144,'F','s b w'))+
+       /* E, H */
+       g('2',"-1:transform=translate(80px,0px);2:transform=translate(0px,0px)",
+         '<circle cx="252" cy="172" r="12" class="tff"/>'+t(252,176,'E','s b w')+'<circle cx="278" cy="166" r="14" class="tff"/>'+t(278,170,'H','s b w'))+
+       /* Mediator */
+       g('3-3',"-1:transform=translate(0px,-60px);3:transform=translate(0px,0px);4:transform=translate(40px,-70px)",
+         '<rect x="140" y="42" width="124" height="38" rx="14" style="fill:var(--tf);fill-opacity:.22;stroke:var(--tf);stroke-width:2"/>'+t(202,60,'Mediator','b cP')+t(202,74,'(> 20 podjedinica)','s')+
+         '<circle cx="50" cy="60" r="15" style="fill:var(--mir)"/>'+t(50,90,'regulatorni','s')+t(50,102,'proteini','s')+
+         '<line x1="66" y1="60" x2="138" y2="60" style="stroke:var(--mir);stroke-width:2;stroke-dasharray:4 3"/>')+
+       /* fosfati */
+       g('4-4',null,
+         '<circle cx="240" cy="114" r="7" style="fill:var(--ph)"/><circle cx="248" cy="98" r="7" style="fill:var(--ph)"/><circle cx="252" cy="84" r="7" style="fill:var(--ph)"/>'+
+         t(240,117,'P','s b')+t(248,101,'P','s b')+t(252,87,'P','s b')+
+         '<path class="rn" d="M176 190 Q190 186 196 176 Q204 156 214 146" marker-end="url(#aR)"/>'+t(222,146,'RNA','s b cR','start')+
+         t(300,62,'faktori elongacije','s cG')+t(300,76,'i dorade mRNA','s cG')+'<line x1="290" y1="82" x2="262" y2="92" class="ak"/>')+
+       cap(0,'TBP (u TFIID) sjeda na TATA-slog')+cap(1,'TFIIB, pa Pol II s TFIIF')+cap(2,'+ TFIIE, TFIIH = preinicijacijski kompleks')+
+       cap(3,'Mediator se veže na CTD')+cap(4,'TFIIH: otvara DNA + fosforilira CTD')
+     ),
+     g('5-5',null,
+       '<path class="rn" d="M20 120 L245 120"/>'+t(12,124,'5′','s b cR','end')+
+       g(null,null,'<path class="rn" d="M245 120 L340 120"/>'+t(348,124,'3′','s b cR','start'),'drift')+
+       '<rect x="140" y="110" width="62" height="20" rx="4" class="hlb"/>'+t(171,124,'AAUAAA','s b')+
+       '<rect x="270" y="110" width="50" height="20" rx="4" class="elb"/>'+t(295,124,'GU / U','s b')+
+       '<line x1="239" y1="106" x2="251" y2="134" class="cut"/><line x1="251" y1="106" x2="239" y2="134" class="cut"/>'+t(245,148,'CA','s b cH')+
+       '<path d="M204 160 L242 160" style="stroke:var(--ink);stroke-width:1.5"/><path d="M204 154 L204 166 M242 154 L242 166" style="stroke:var(--ink);stroke-width:1.5"/>'+t(223,178,'10–30 nt','s b')+
+       '<ellipse cx="200" cy="76" rx="92" ry="18" class="tff"/>'+t(200,80,'faktori za kidanje i poliadenilaciju','s b w')+
+       t(80,160,'endonukleaza kida','s b cH')+t(80,174,'transkript','s b cH')+
+       t(180,214,'Pol II nema ukosnicu kao prokarioti','s m')+
+       cap(5,'terminacija: rez nizvodno od AAUAAA'))
+   ),
+   steps:[
+     {html:'<p>🎬 Gradimo <b>preinicijacijski kompleks</b> RNA polimeraze II, korak po korak.</p><p>Prvi stiže <b>TFIID</b>: njegova podjedinica <b>TBP (TATA-vezujući protein)</b> veže se na <b>TATA-slog</b>, uz <b>TAF proteine</b> (TBP-associated factors). Time <b>započinje stvaranje transkripcijskog kompleksa</b>. 🏁</p>'},
+     {html:'<p>➕ Zatim se veže još jedan opći faktor – <b>TFIIB</b>, a onda stiže glavna zvijezda: <b>RNA polimeraza II</b>, zajedno s <b>TFIIF</b>. 🚪</p><p>Primijeti „rep” polimeraze – to je <b>CTD</b>, uskoro će biti važan.</p>'},
+     {html:'<p>🧩 Potom se vežu ostali opći faktori: <b>TFIIE</b> i <b>TFIIH</b>. Svi na broju = <b>preinicijacijski kompleks</b>.</p><span class="mn">🧠 Redoslijed D-B-F-E-H: „<b>D</b>aj <b>B</b>urek, <b>F</b>ali <b>E</b>nergije, <b>H</b>itno!” 🥐 (TFIID → TFIIB → Pol II + TFIIF → TFIIE → TFIIH)</span>'},
+     {html:'<p>🤝 Za <b>učinkovitu</b> transkripciju pridružuje se <b>Mediator</b> – kompleks od <b>više od 20 podjedinica</b> koji povezuje <b>Pol II, opće TF i regulatorne proteine</b>.</p><p>Mediator se veže na <b>CTD</b> = <b>C-terminalnu domenu najveće podjedinice</b> RNA polimeraze II. Mediator je glavni posrednik u traču – prenosi poruke! 📞</p>'},
+     {html:'<p>⚡ <b>TFIIH</b> ima <b>helikaznu aktivnost</b> (otvara DNA) i <b>fosforilira CTD</b>. Nakon te fosforilacije <b>Mediator se oslobađa</b> i <b>transkripcija započinje</b> 🚀.</p><p>Na <b>fosforilirani CTD</b> sada se vežu <b>faktori elongacije i procesiranja (dorade) mRNA</b>.</p><span class="mn">🧠 TFII<b>H</b> = <b>H</b>elikaza + fosforilacija → „<b>H</b>ajde, kreni!”</span>'},
+     {html:'<p>✂️ <b>Terminacija u eukariota</b>: Pol II <b>nema terminacijski signal</b> kao prokarioti.</p><p>Primarni transkript se otpušta nakon prijepisa <b>poliadenilacijskog signala (AAUAAA)</b> i <b>nizvodne sekvence bogate GU ili U</b>. Signal prepoznaje <b>kompleks specifičnih faktora za kidanje i poliadenilaciju</b>, a <b>endonukleaza</b> kida transkript <b>10–30 nukleotida nizvodno</b> od signala (obično na <b>CA</b> slijedu). Zatim slijedi <b>dorada pre-mRNA</b>.</p>'}
+   ],
+   q:{ type:'mc', text:'Što se događa nakon što <b>TFIIH fosforilira CTD</b> RNA polimeraze II?',
+     opts:[
+       {t:'TBP se tek tada veže na TATA-slog', why:'Ne – TBP (u TFIID) se veže <b>prvi</b>, na samom početku stvaranja kompleksa.'},
+       {t:'Mediator se tek tada veže na CTD', why:'Obrnuto: Mediator je već vezan na CTD, a fosforilacija ga <b>oslobađa</b>.'},
+       {t:'Mediator se oslobađa, transkripcija započinje, a na CTD se vežu faktori elongacije i dorade', ok:true, why:'Točno! Fosforilirani CTD je „sletište” za faktore elongacije i dorade mRNA.'},
+       {t:'Stvara se ukosnica i RNA se odvaja od kalupa', why:'To je <b>terminacija u prokariota</b>; Pol II nema takav terminacijski signal.'}
+     ]}
+ },
+ /* ---------- SCENA 5 ---------- */
+ { title:'5′ kapa i poli-A rep',
+   legend:['rna','cap','enz','hl'],
+   svg: svg(
+     '<rect x="6" y="36" width="348" height="180" rx="22" class="nuc"/>'+t(20,56,'JEZGRA','s b','start')+
+     /* pre-mRNA */
+     '<path class="rn" d="M50 130 L316 130" style="stroke-width:3"/>'+
+     '<rect x="70" y="121" width="50" height="18" rx="4" class="exf"/><rect x="160" y="121" width="40" height="18" rx="4" class="exf"/><rect x="222" y="121" width="34" height="18" rx="4" class="exf"/>'+
+     '<path d="M120 130 L160 130 M200 130 L222 130" style="stroke:var(--intron);stroke-width:4"/>'+
+     t(95,156,'egzon','s')+t(140,156,'intron','s m')+t(180,156,'egzon','s')+t(239,156,'egzon','s')+
+     g('0-0',null,t(42,134,'5′','s b cR','end')+t(140,96,'krajevi još nezaštićeni','s m')),
+     '<rect x="262" y="122" width="38" height="16" rx="3" class="hlb"/>'+t(281,114,'AAUAAA','s b cH')+
+     /* nizvodni dio */
+     g(null,'-1:transform=translate(0px,0px);2:transform=translate(20px,50px)|opacity=0','<path class="rn" d="M316 130 L348 130" style="stroke-width:3"/>'+t(352,124,'3′','s b cR','end')),
+     /* kapa */
+     g('1',"-1:transform=translate(-30px,-60px);1:transform=translate(0px,0px)",
+       '<circle cx="44" cy="130" r="14" class="cpf"/>'+t(44,134,'m7G','s b w')+t(44,104,'5′ kapa','s b cK')+t(76,112,'CH₃','s cK')+t(100,112,'CH₃','s cK')),
+     /* rez */
+     g('2-2',null,'<line x1="310" y1="116" x2="322" y2="144" class="cut"/><line x1="322" y1="116" x2="310" y2="144" class="cut"/>'+t(316,160,'CA','s b cH')+t(300,92,'endonukleaza','s b cH')+t(300,180,'10–30 nt nizvodno','s'),'pulse'),
+     /* poli-A rep */
+     g('3',null,'<path d="M316 130 Q346 132 342 160 Q338 192 296 196 L200 196" pathLength="100" style="fill:none;stroke:var(--cap);stroke-width:5;stroke-linecap:round;stroke-dasharray:100 100" data-anim="-1:stroke-dashoffset=100;3:stroke-dashoffset=0"/>'+
+       t(262,209,'AAAAAAAA… (≈ 200–300 A)','s b cK')+
+       '<ellipse class="ez" cx="140" cy="194" rx="56" ry="13"/>'+t(140,198,'poli-A polimeraza','s b cG')),
+     cap(0,'pre-mRNA (primarni transkript)')+cap(1,'5′ kapa: m7G – zaštita + početak translacije')+cap(2,'endonukleaza kida nizvodno od AAUAAA')+cap(3,'poli-A rep: stabilnost i translacija')
+   ),
+   steps:[
+     {html:'<p>🧪 Primarni transkript (<b>pre-mRNA</b>) nije spreman za izlazak. Većina primarnih transkripata <b>dorađuje se</b> u funkcionalni oblik, i to <b>u jezgri</b>.</p><p>Upravo je <b>dorada mRNA najveća razlika prokariota i eukariota</b>: <b>zaštita 5′ i 3′ kraja</b> i <b>izrezivanje introna</b>. Iznimka je mRNA prokariota, koja se <b>prevodi odmah</b>. 🏃</p>'},
+     {html:'<p>👑 <b>5′ kapa (7-metilgvanozin)</b>: na 5′ kraj dodaje se <b>GTP</b>, a gvanin se <b>metilira</b> → <b>m7G</b>. Metilne skupine dodaju se i na <b>riboze prvog ili prvih dvaju nukleotida</b>.</p><p>Uloge: <b>štiti 5′ kraj od razgradnje</b> (stabilizira molekulu) i važna je za <b>početak translacije</b> (vezanje mRNA na ribosome).</p><span class="mn">🧠 Kapa = kaciga 🪖 + ulaznica za ribosom 🎟️.</span>'},
+     {html:'<p>📮 <b>Poliadenilacija (3′ kraj)</b>, 1. dio: <b>endonukleaza</b> cijepa pre-mRNA <b>10–30 nukleotida nizvodno od AAUAAA</b>, na <b>CA</b> slijedu. Dio iza reza odlazi. ✂️</p>'},
+     {html:'<p>🐍 2. dio: <b>poli-A polimeraza</b> dodaje <b>poli-A rep</b> – oko <b>200–300 adenina</b> – na 3′ kraj.</p><p>Uloga repa: <b>regulira translaciju i stabilnost mRNA</b> (npr. kontrola translacije u <b>ranom embrionalnom razvoju</b>).</p><span class="mn">🧠 Kapa na glavi, rep na kraju – mRNA odjevena za izlazak iz jezgre! 💃</span>'}
+   ],
+   q:{ type:'short', text:'Kako se zove enzim koji na 3′ kraj pre-mRNA dodaje oko 200–300 adenina?',
+     accept:['poliapolimeraza','poliadenilatpolimeraza','poliadenilacijskapolimeraza','poliapolimerazu'],
+     answer:'poli-A polimeraza',
+     wrongMap:[
+       ['endonukleaz','Endonukleaza samo <b>kida</b> pre-mRNA 10–30 nt nizvodno od AAUAAA – ona ne dodaje adenine.'],
+       ['rnapolimeraz','RNA polimeraza II <b>prepisuje</b> gen; rep dodaje poseban enzim.'],
+       ['polimeraz','Blizu si! Koja polimeraza? Ime kaže što dodaje: <b>poli-A</b>…'],
+       ['kapa','Kapa (m7G) je na <b>5′ kraju</b>; ovdje pitamo za 3′ kraj.']
+     ],
+     hint:'Pomoć: dva su enzima na 3′ kraju – jedan <b>reže</b> (endonukleaza), drugi <b>dodaje rep</b>. Ime drugoga = „poli-A” + „polimeraza”.',
+     why:'Poli-A polimeraza dodaje poli-A rep (≈ 200–300 A) nakon što endonukleaza prereže pre-mRNA nizvodno od AAUAAA.'}
+ },
+ /* ---------- SCENA 6 ---------- */
+ { title:'Prekrajanje (splicing) i spliceosom',
+   legend:['rna','sn','hl'],
+   svg: svg(
+     /* spliceosom oblak */
+     g('2-3',null,'<ellipse cx="165" cy="118" rx="118" ry="52" style="fill:var(--sn);fill-opacity:.12;stroke:var(--sn);stroke-dasharray:5 4"/>'+t(165,184,'spliceosom','s b cT')),
+     /* intron linearni */
+     g('0-3',null,'<path class="intr" d="M95 150 L265 150"/>'+
+       '<circle cx="230" cy="150" r="9" class="hlb" style="fill-opacity:.6"/>'+t(230,154,'A','s b')+
+       g('0-1',null,t(100,186,'5′ mjesto','s b')+t(230,186,'točka grananja','s b cH')+t(268,202,'3′ mjesto','s b')+t(180,172,'intron','s m'))),
+     /* egzoni */
+     g('0-5','-1:transform=translate(0px,0px);5:transform=translate(70px,0px)','<rect x="20" y="140" width="75" height="20" rx="5" class="exf"/>'+t(57,154,'egzon 1','s b w')),
+     g('0-5','-1:transform=translate(0px,0px);5:transform=translate(-100px,0px)','<rect x="265" y="140" width="75" height="20" rx="5" class="exf"/>'+t(302,154,'egzon 2','s b w')),
+     g('0-3',null,t(20,132,'5′','s b cR')+t(340,132,'3′','s b cR')),
+     /* snRNP */
+     g('1',"-1:transform=translate(0px,-50px)|opacity=0;1:transform=translate(0px,0px)|opacity=1;3:transform=translate(-30px,-70px)|opacity=0",'<circle cx="95" cy="124" r="15" class="snf"/>'+t(95,128,'U1','s b w')),
+     g('1-3',"-1:transform=translate(0px,-50px);1:transform=translate(0px,0px)",'<circle cx="230" cy="124" r="15" class="snf"/>'+t(230,128,'U2','s b w')),
+     g('2',"-1:transform=translate(0px,-60px)|opacity=0;2:transform=translate(0px,0px)|opacity=1;3:transform=translate(0px,-70px)|opacity=0",'<circle cx="140" cy="100" r="15" class="snf"/>'+t(140,104,'U4','s b w')),
+     g('2-3',"-1:transform=translate(0px,-60px);2:transform=translate(0px,0px)",
+       '<circle cx="172" cy="100" r="15" class="snf"/>'+t(172,104,'U6','s b w')+'<circle cx="204" cy="100" r="15" class="snf"/>'+t(204,104,'U5','s b w')),
+     g('3-3',null,'<circle cx="172" cy="100" r="19" style="fill:none;stroke:var(--hl);stroke-width:3"/>'+t(172,76,'U6 katalizira','s b cH'),'pulse'),
+     /* laso */
+     g('4-4',null,'<path class="intr" d="M265 150 L230 150"/><circle cx="198" cy="140" r="32" class="intr"/>'+
+       '<circle cx="229" cy="146" r="9" class="hlb" style="fill-opacity:.6"/>'+t(229,150,'A','s b')+
+       t(198,92,'laso (lariat)','s b')+'<line x1="99" y1="128" x2="111" y2="160" class="cut"/><line x1="111" y1="128" x2="99" y2="160" class="cut"/>'+
+       t(105,186,'rez na 5′ mjestu','s b cH')),
+     /* spojeni */
+     g('5-5',null,g(null,null,'<circle cx="290" cy="80" r="26" class="intr"/><path class="intr" d="M314 88 L340 96"/>'+t(290,124,'laso → razgradnja','s m'),'drift')+
+       t(165,186,'egzon 1 + egzon 2 spojeni','s b')+'<line x1="165" y1="134" x2="165" y2="166" style="stroke:var(--ink);stroke-width:2"/>'),
+     /* alternativno */
+     g('6-6',null,
+       t(180,30,'ista pre-mRNA','s b')+
+       '<path d="M30 55 L320 55" style="stroke:var(--intron);stroke-width:4"/>'+
+       '<rect x="30" y="45" width="50" height="20" rx="4" class="exf"/><rect x="110" y="45" width="50" height="20" rx="4" style="fill:var(--el)"/><rect x="190" y="45" width="50" height="20" rx="4" class="snf"/><rect x="270" y="45" width="50" height="20" rx="4" class="cpf"/>'+
+       t(55,59,'1','s b w')+t(135,59,'2','s b')+t(215,59,'3','s b w')+t(295,59,'4','s b w')+
+       '<line x1="140" y1="74" x2="100" y2="118" class="ak"/><line x1="220" y1="74" x2="260" y2="118" class="ak"/>'+
+       '<rect x="25" y="125" width="45" height="20" rx="4" class="exf"/><rect x="70" y="125" width="45" height="20" rx="4" style="fill:var(--el)"/><rect x="115" y="125" width="45" height="20" rx="4" class="cpf"/>'+
+       t(47,139,'1','s b w')+t(92,139,'2','s b')+t(137,139,'4','s b w')+
+       '<rect x="200" y="125" width="45" height="20" rx="4" class="exf"/><rect x="245" y="125" width="45" height="20" rx="4" class="snf"/><rect x="290" y="125" width="45" height="20" rx="4" class="cpf"/>'+
+       t(222,139,'1','s b w')+t(267,139,'3','s b w')+t(312,139,'4','s b w')+
+       t(92,168,'mRNA 1-2-4','s')+t(267,168,'mRNA 1-3-4','s')+t(92,188,'→ protein A','s b cG')+t(267,188,'→ protein B','s b cG')),
+     cap(0,'introni van, egzoni se spajaju')+cap(1,'U1 → 5′ mjesto, U2 → točka grananja')+cap(2,'ulaze U4/U6 i U5')+cap(3,'U4 i U1 odlaze, U6 katalizira')+
+     cap(4,'1. korak: nastaje laso')+cap(5,'2. korak: egzoni spojeni, laso se razgrađuje')+cap(6,'alternativno prekrajanje: 1 gen → više proteina')
+   ),
+   steps:[
+     {html:'<p>✂️ <b>Prekrajanje (splicing)</b>: <b>introni</b> (nekodirajući dijelovi) se <b>izrezuju</b>, a <b>egzoni</b> (kodirajući dijelovi) <b>spajaju</b> u kontinuirani kodirajući slijed.</p><p>Gdje? <b>U jezgri</b>, u <b>spliceosomima</b> (tjelešcima za prekrajanje) – velikim kompleksima <b>snRNA i proteina</b> (<b>snRNP</b> = small nuclear ribonucleoprotein particles). U jezgri postoje i <b>jezgrine pjege (speckles)</b> – odjeljci za splicing faktore.</p><span class="mn">🧠 <b>E</b>gzoni <b>E</b>migriraju u gotovu mRNA ✈️, <b>I</b>ntroni se <b>I</b>zrezuju 🗑️.</span>'},
+     {html:'<p>🎯 Sastavljanje spliceosoma, korak 1: <b>U1 snRNP</b> veže se na <b>5′ mjesto prekrajanja</b>, a <b>U2 snRNP</b> na <b>točku grananja</b> – <b>adenin (A) unutar introna</b>.</p>'},
+     {html:'<p>🚌 Korak 2: u spliceosom ulaze <b>kompleks U4/U6</b> i <b>U5</b>. Ekipa je na okupu!</p>'},
+     {html:'<p>🚪 Korak 3: <b>U4 i U1 se odvajaju</b>, a <b>U6</b> postaje glavni: <b>katalizira stvaranje lasastog intermedijara i ligaciju (spajanje) egzona</b>.</p><span class="mn">🧠 „U1 i U4 – van! U6 – na posao!” 💼</span>'},
+     {html:'<p>🤠 <b>Prvi ključni korak</b>: <b>kidanje na 5′ mjestu prekrajanja</b> i spajanje <b>5′ kraja introna na adenin unutar introna (točka grananja)</b> → nastaje <b>intronska petlja u obliku lasa (lariat)</b>.</p>'},
+     {html:'<p>🔗 <b>Drugi ključni korak</b>: <b>kidanje na 3′ mjestu prekrajanja</b> i <b>spajanje susjednih egzona</b>. Izrezana intronska petlja <b>se razgrađuje</b> 🗑️.</p><p>Tko radi kemiju? <b>snRNA</b> (<b>U1, U2, U4, U5, U6</b>; 50–200 nukleotida) prepoznaju <b>usaglašene (konsenzus) sljedove</b> na 5′ i 3′ mjestima i <b>izravno kataliziraju</b> reakciju → snRNA su <b>ribozimi</b> (RNA s katalitičkom aktivnošću)! 🤯</p>'},
+     {html:'<p>🎰 <b>Alternativno prekrajanje</b>: ista pre-mRNA može se obraditi na <b>različite načine</b> – egzoni se spajaju u <b>različitim kombinacijama</b>, pa iz <b>jednog gena</b> nastaje <b>više mRNA i više proteina</b>.</p><p>Važno je za <b>regulaciju genske ekspresije</b> i objašnjava zašto je <b>broj proteina veći od broja gena</b>.</p><span class="mn">🧠 Isti sastojci, različiti sendviči 🥪.</span>'}
+   ],
+   q:{ type:'mc', text:'Zašto za snRNA kažemo da su <b>ribozimi</b>?',
+     opts:[
+       {t:'Jer su dio ribosoma', why:'Ribozim ≠ ribosom! snRNA su dio <b>spliceosoma</b> u jezgri.'},
+       {t:'Jer izrezuju egzone iz pre-mRNA', why:'Obrnuto – izrezuju se <b>introni</b>, a egzoni se spajaju.'},
+       {t:'Jer kao RNA izravno kataliziraju reakciju prekrajanja', ok:true, why:'Točno! Ribozim = RNA s katalitičkom aktivnošću. snRNA prepoznaju konsenzus sljedove i izravno kataliziraju reakciju.'},
+       {t:'Jer se prevode u proteine spliceosoma', why:'Ne – snRNA djeluju <b>kao RNA</b>: prepoznaju mjesta prekrajanja i kataliziraju reakciju.'}
+     ]}
+ },
+ /* ---------- SCENA 7 ---------- */
+ { title:'Regulacija genske ekspresije i epigenetika',
+   legend:['dna1','rna','enz','tf','mir'],
+   svg: svg(
+     g('0-0',null,
+       t(180,40,'ista DNA u svim stanicama','b')+
+       [[65,[0,2]],[180,[1,3]],[295,[4,1]]].map(function(c,ci){var x=c[0],o='<circle cx="'+x+'" cy="120" r="50" class="cell"/>';for(var i=0;i<5;i++){o+='<rect x="'+(x-36+i*14.5)+'" y="113" width="13" height="14" rx="2" style="fill:'+(c[1].indexOf(i)>=0?'var(--hl)':'var(--histone)')+'"/>';}return o+t(x,190,'stanica '+(ci+1),'s b');}).join('')+
+       t(180,218,'aktivno samo ~10–20 % od ~20 000 gena','s b cH')),
+     g('1-1',null,
+       ['1. epigenetska','2. transkripcijska (glavna razina)','3. post-transkripcijska','4. translacijska','5. post-translacijska'].map(function(s,i){
+         return '<rect x="'+(30+i*14)+'" y="'+(34+i*34)+'" width="'+(300-i*28)+'" height="28" rx="8" style="fill:'+(i===1?'var(--hl)':'var(--tf)')+';fill-opacity:'+(i===1?'.3':'.15')+';stroke:'+(i===1?'var(--hl)':'var(--tf)')+'"/>'+t(180,53+i*34,s,i===1?'b':'');}).join('')),
+     g('2-2',null,
+       '<path d="M10 205 L120 205 C150 205 162 190 150 170 C135 140 60 150 50 110 C40 70 110 40 160 60 C200 76 204 120 188 150 C176 172 182 205 215 205 L350 205" style="fill:none;stroke:var(--dna1);stroke-width:5;stroke-linecap:round"/>'+
+       '<ellipse cx="168" cy="178" rx="28" ry="14" style="fill:none;stroke:var(--sn);stroke-width:4"/>'+t(136,178,'kohezin','s b cT','end')+
+       '<rect x="186" y="96" width="20" height="20" rx="3" style="fill:var(--mir);fill-opacity:.5;stroke:var(--mir)"/>'+t(182,96,'pojačivač','s b cM','end')+
+       '<circle cx="224" cy="126" r="14" style="fill:var(--mir)"/>'+t(242,122,'aktivator','s b cM','start')+
+       '<rect x="214" y="140" width="84" height="24" rx="10" style="fill:var(--tf);fill-opacity:.25;stroke:var(--tf)"/>'+t(256,156,'Mediator','s b cP')+
+       '<ellipse class="ez" cx="256" cy="192" rx="40" ry="18"/>'+t(256,196,'Pol II','s b cG')+t(256,228,'promotor','s b')+
+       t(95,100,'petlja DNA','s m')),
+     g('3-3',null,
+       '<path class="rn" d="M30 140 L330 140"/><circle cx="26" cy="140" r="7" class="cpf"/>'+t(334,144,'AAA','s b cK','start')+t(40,160,'5′','s b cR')+t(320,160,'3′','s b cR')+
+       t(180,160,'ciljna mRNA','s cR')+
+       g(null,'-1:transform=translate(0px,-50px);3:transform=translate(0px,0px)',
+         '<path d="M150 124 L222 124" style="stroke:var(--mir);stroke-width:4;stroke-linecap:round"/>'+
+         [154,163,172,190,199,208,217].map(function(x){return '<line x1="'+x+'" y1="127" x2="'+x+'" y2="137" class="gr" style="opacity:1"/>';}).join('')+
+         t(186,108,'miRNA (21–24 nt)','s b cM')+t(186,92,'djelomično komplementarna','s'))+
+       '<line x1="160" y1="170" x2="110" y2="196" class="ak"/><line x1="210" y1="170" x2="260" y2="196" class="ak"/>'+
+       t(95,212,'represija translacije','s b')+t(270,212,'razgradnja mRNA','s b')+t(180,214,'i/ili','s m')),
+     g('4-4',null,
+       '<line x1="20" y1="130" x2="340" y2="130" class="cd"/><line x1="20" y1="140" x2="340" y2="140" class="ct"/>'+
+       t(120,160,'C G','s b')+t(220,160,'C G','s b')+
+       '<line x1="115" y1="126" x2="115" y2="100" style="stroke:var(--ink);stroke-width:2"/><circle cx="115" cy="90" r="12" style="fill:var(--ph)"/>'+t(115,94,'CH₃','s b')+
+       '<line x1="215" y1="126" x2="215" y2="100" style="stroke:var(--ink);stroke-width:2"/><circle cx="215" cy="90" r="12" style="fill:var(--ph)"/>'+t(215,94,'CH₃','s b')+
+       t(180,58,'5-metilcitozin u CpG','s b')+
+       t(180,190,'slijed nukleotida ostaje ISTI','s b cH')+t(180,208,'nasljedno + reverzibilno','s')),
+     g('5-5',null,
+       '<rect x="8" y="30" width="108" height="40" rx="8" style="fill:var(--ph);fill-opacity:.3;stroke:var(--ph)"/>'+t(62,48,'DNA','s b')+t(62,62,'metilacija','s b')+
+       '<rect x="126" y="30" width="108" height="40" rx="8" style="fill:var(--histone);fill-opacity:.45;stroke:var(--histone)"/>'+t(180,48,'modifikacije','s b')+t(180,62,'histona','s b')+
+       '<rect x="244" y="30" width="108" height="40" rx="8" style="fill:var(--mir);fill-opacity:.25;stroke:var(--mir)"/>'+t(298,48,'nekodirajuće','s b')+t(298,62,'RNA','s b')+
+       '<line x1="62" y1="72" x2="160" y2="98" class="ak"/><line x1="180" y1="72" x2="180" y2="98" class="ak"/><line x1="298" y1="72" x2="200" y2="98" class="ak"/>'+
+       t(180,116,'REMODELACIJA KROMATINA','b')+
+       '<line x1="20" y1="170" x2="160" y2="170" class="cd"/>'+'<circle cx="40" cy="170" r="11" class="hist"/><circle cx="90" cy="170" r="11" class="hist"/><circle cx="140" cy="170" r="11" class="hist"/>'+
+       t(90,200,'otvoreniji → dostupan','s b cG')+
+       '<line x1="200" y1="170" x2="340" y2="170" class="cd"/>'+[232,252,272,292,312].map(function(x){return '<circle cx="'+x+'" cy="170" r="11" class="hist"/>';}).join('')+
+       t(272,200,'zbijeniji → utišan','s b cH')),
+     cap(0,'različita regulacija gena')+cap(1,'regulacija moguća na svakom koraku')+cap(3,'miRNA: post-transkripcijski nadzor')+cap(4,'epigenetika: DNA metilacija')+cap(5,'mehanizmi epigenetskih modifikacija')
+   ),
+   steps:[
+     {html:'<p>🤔 Pitanje za milijun: gotovo sve stanice jedne osobe imaju <b>istu DNA</b> – zašto onda izgledaju i rade različito? Zbog <b>različite regulacije gena</b>!</p><p>U prosječnoj diferenciranoj stanici čovjeka aktivno je oko <b>10–20 % od ~20 000 gena</b>. <b>Genska ekspresija</b> = proces kojim se informacija iz gena koristi za stvaranje <b>funkcionalnog produkta (RNA i proteina)</b>.</p>'},
+     {html:'<p>🪜 <b>Razine regulacije</b>: 1. <b>epigenetska</b>, 2. <b>transkripcijska</b>, 3. <b>post-transkripcijska</b>, 4. <b>translacijska</b>, 5. <b>post-translacijska</b>. Geni su regulirani <b>prvenstveno na razini transkripcije</b>, ali kontrola je moguća u <b>bilo kojem koraku</b>.</p><p>Regulaciju transkripcije određuju: <b>regulatorni elementi</b> (vrsta, broj, položaj, kombinacija), <b>dostupnost i aktivnost TF</b> (središnja uloga) i <b>preuređenje kromatina</b>.</p><span class="mn">🧠 E-T-P-T-P: „<b>E</b>to <b>T</b>i <b>P</b>et <b>T</b>račeva <b>P</b>opodne” ☕</span>'},
+     {html:'<p>🔁 <b>Pojačivači (enhanceri) + aktivatori</b> → <b>povećavaju</b> brzinu transkripcije (up-regulacija) ⬆️. <b>Prigušivači (silenceri) + represori</b> → <b>smanjuju</b> je (down-regulacija) ⬇️.</p><p>Ti elementi mogu biti <b>daleko od gena</b>! DNA se <b>savija u petlju</b> koju stabilizira protein <b>kohezin</b>, a nastaje interakcijom <b>općih i specifičnih TF</b> te kompleksa <b>Mediator</b> – tako udaljeni element dolazi u dodir s promotorom. Trač na daljinu! 📡</p>'},
+     {html:'<p>🤫 <b>MikroRNA (miRNA)</b> – <b>post-transkripcijski nadzor</b>. <b>Nekodirajuće</b> RNA duljine <b>21–24 nt</b> koje nadziru ekspresiju velikog broja gena. Geni za miRNA su na <b>svim kromosomima osim Y</b>, u intergenskim područjima i intronima, često u skupinama.</p><p>Mehanizam: miRNA je <b>djelomično komplementarna</b> ciljnoj mRNA → <b>RNA-RNA hibrid</b> (dvolančana RNA) → <b>represija translacije i/ili razgradnja mRNA</b>.</p>'},
+     {html:'<p>🌿 <b>Epigenetika</b> = znanost o <b>nasljednom i reverzibilnom</b> nadzoru aktivnosti gena koji <b>ne uključuje promjenu slijeda nukleotida</b> u DNA. Modifikacije su <b>djelomično nasljedne</b> (stabilne kroz <b>mitozu</b>, dijelom i kroz <b>mejozu</b>), <b>reverzibilne</b> (okoliš: prehrana, agensi, starenje…) i djeluju kao <b>prekidači</b> 🔛.</p><p><b>Genomski upis (imprinting)</b>: ekspresija gena ovisi o <b>roditeljskom podrijetlu</b> (utišan je alel jednog roditelja). Primjeri s predavanja: <b>parcijalna mola hidatidoza</b> i <b>uniparentna disomija</b>.</p>'},
+     {html:'<p>🧷 <b>Mehanizmi epigenetskih modifikacija</b>: 1. <b>DNA metilacija</b>, 2. <b>modifikacije histona</b>, 3. <b>nekodirajuće RNA</b> → sve vode do <b>remodelacije kromatina</b> (više ili manje dostupan transkripciji).</p><p><b>DNA metilacija</b>: kovalentno vezanje <b>CH₃</b>; u sisavaca samo na <b>citozine u CpG dinukleotidima</b> (u velikom utoru DNA) → <b>5-metilcitozin</b>. Metilacija CpG-a u <b>promotoru</b> povezana je s <b>utišavanjem gena</b> 🔇.</p><span class="mn">🧠 „Metil na promotoru = gen na <i>mute</i>.” 🤐</span>'}
+   ],
+   q:{ type:'mc', text:'Što od navedenog <b>NIJE</b> obilježje epigenetskih modifikacija?',
+     opts:[
+       {t:'Reverzibilne su – mijenjaju se pod utjecajem okoliša', why:'Ovo JEST obilježje epigenetike (reverzibilnost).'},
+       {t:'Mijenjaju slijed nukleotida u DNA', ok:true, why:'Točno – to NIJE epigenetika! Epigenetski nadzor <b>ne uključuje promjenu slijeda nukleotida</b>.'},
+       {t:'Stabilne su kroz mitozu', why:'Ovo JEST obilježje – djelomično su nasljedne, stabilne kroz mitozu (a dijelom i kroz mejozu).'},
+       {t:'Mogu nastati metilacijom citozina u CpG dinukleotidima', why:'Ovo JEST epigenetski mehanizam – DNA metilacija (nastaje 5-metilcitozin).'}
+     ]}
+ }
+ ],
+ summary:[
+  'Središnja dogma: <b>DNA → RNA → protein</b>; transkripcija je 1. korak ekspresije gena.',
+  'Kalup lanac se čita <b>3′→5′</b>, RNA raste <b>5′→3′</b>; RNA polimeraza <b>ne treba početnicu</b>.',
+  'Prokarioti: <b>σ</b> prepoznaje <b>−10 i −35</b>; zatvoreni → otvoreni kompleks; mjehur ~15 bp; terminacija = <b>GC-ukosnica</b> + niz A na kalupu.',
+  'Eukarioti: <b>Pol I</b> (rRNA 5.8S, 18S, 28S), <b>Pol II</b> (mRNA, miRNA, lncRNA), <b>Pol III</b> (tRNA, 5S rRNA).',
+  'Promotor: <b>TATA</b> (−25 do −30, ~30 % promotora Pol II), <b>Inr</b> (obuhvaća +1).',
+  'Preinicijacijski kompleks: <b>TFIID (TBP) → TFIIB → Pol II + TFIIF → TFIIE, TFIIH</b>; Mediator na CTD; TFIIH fosforilira CTD → Mediator odlazi.',
+  'Terminacija: <b>AAUAAA</b> + GU/U; endonukleaza kida <b>10–30 nt nizvodno</b> (na CA).',
+  'Dorada u jezgri: <b>5′ kapa m7G</b>, <b>poli-A rep (200–300 A)</b>, <b>prekrajanje</b> (U1, U2 → U4/U6 + U5 → U6 katalizira; laso; snRNA = ribozimi); <b>alternativno prekrajanje</b>.',
+  'Regulacija: 5 razina, prvenstveno transkripcijska; pojačivači/prigušivači, petlja + kohezin; <b>miRNA 21–24 nt</b>.',
+  'Epigenetika: nasljedno, reverzibilno, <b>bez promjene slijeda</b>; metilacija CpG → 5-metilcitozin; genomski upis.'
+ ],
+ quiz:[
+  {text:'Kodirajući lanac DNA…', opts:[
+    {t:'ima isti slijed kao nastala RNA (T umjesto U)', ok:true, why:'Točno – zato se zove kodirajući.'},
+    {t:'je komplementaran nastaloj RNA', why:'Komplementaran RNA je <b>kalup lanac</b>.'},
+    {t:'služi kao kalup za RNA polimerazu', why:'Kalup je drugi, <b>nekodirajući (kalup) lanac</b>.'},
+    {t:'čita se u smjeru 3′→5′', why:'3′→5′ se čita <b>kalup lanac</b>; kodirajući ide 5′→3′.'}]},
+  {text:'TATA-slog eukariotskog promotora nalazi se…', opts:[
+    {t:'na pozicijama −10 i −35', why:'To su elementi promotora <b>prokariota</b> (E. coli).'},
+    {t:'oko 25–30 nukleotida uzvodno od +1', ok:true, why:'Točno – i ima ga samo oko 30 % promotora Pol II.'},
+    {t:'tako da obuhvaća mjesto +1', why:'Mjesto početka obuhvaćaju <b>Inr elementi</b>.'},
+    {t:'u svim promotorima RNA polimeraze II', why:'Ne – najviše u oko <b>30 %</b> promotora Pol II.'}]},
+  {text:'Koliko adenina otprilike ima poli-A rep?', opts:[
+    {t:'21–24', why:'To je duljina <b>miRNA</b> (nt).'},
+    {t:'oko 15', why:'To je veličina <b>transkripcijskog mjehura</b> (bp) u prokariota.'},
+    {t:'10–30', why:'To je udaljenost mjesta kidanja <b>nizvodno od AAUAAA</b>.'},
+    {t:'200–300', ok:true, why:'Točno – dodaje ih poli-A polimeraza.'}]},
+  {text:'Koja se snRNP čestica veže na 5′ mjesto prekrajanja?', opts:[
+    {t:'U1', ok:true, why:'Točno – U1 na 5′ mjesto, U2 na točku grananja.'},
+    {t:'U2', why:'U2 se veže na <b>točku grananja</b> (adenin u intronu).'},
+    {t:'U6', why:'U6 ulazi kasnije (s U4) i <b>katalizira</b> reakciju.'},
+    {t:'U5', why:'U5 ulazi zajedno s kompleksom U4/U6.'}]},
+  {text:'Kako miRNA smanjuje ekspresiju gena?', opts:[
+    {t:'Metilira citozine u CpG dinukleotidima', why:'To je <b>DNA metilacija</b>, epigenetski mehanizam.'},
+    {t:'Veže se na TATA-slog i blokira TBP', why:'Na TATA-slog se veže <b>TBP</b>; miRNA djeluje na mRNA.'},
+    {t:'Djelomično komplementarno se veže na mRNA → represija translacije i/ili razgradnja mRNA', ok:true, why:'Točno – post-transkripcijski nadzor preko RNA-RNA hibrida.'},
+    {t:'Mijenja slijed nukleotida u genu', why:'Ne – miRNA ne mijenja DNA, djeluje na ciljnu mRNA.'}]}
+ ]
+};
+
+var LECTURES = [
+ {id:'p12', code:'P12', title:'Mejoza', status:'soon'},
+ {id:'p13', code:'P13', title:'Programirana stanična smrt (apoptoza)', status:'other'},
+ {id:'p14', code:'P14', title:'Kromosomske mutacije', status:'soon'},
+ {id:'p15', code:'P15', title:'Replikacija DNA', status:'other'},
+ P16,
+ {id:'p18', code:'P18', title:'Translacija', status:'soon'},
+ {id:'p19', code:'P19', title:'Smatanje, dorada i regulacija proteina', status:'soon'},
+ {id:'p20', code:'P20', title:'Genska osnova mutacija', status:'soon'},
+ {id:'p21', code:'P21', title:'Rekombinacija i popravak DNA', status:'soon'}
+];
+
+var LEG = {dna1:['var(--dna1)','DNA kodirajući lanac'],dna2:['var(--dna2)','DNA kalup lanac'],rna:['var(--rna)','RNA'],enz:['var(--enz)','enzim (polimeraza)'],
+  tf:['var(--tf)','proteini / faktori'],hl:['var(--hl)','istaknuti slijed'],el:['var(--el)','regulatorni element'],cap:['var(--cap)','kapa / poli-A'],sn:['var(--sn)','snRNP'],mir:['var(--mir)','miRNA / spec. TF']};
+
+/* ================= GOVOR (speechSynthesis) ================= */
+var hasTTS = ('speechSynthesis' in window) && ('SpeechSynthesisUtterance' in window);
+var voice = null, voiceNote = '';
+function pickVoice(){
+  if(!hasTTS) { voiceNote='Ovaj preglednik ne podržava čitanje naglas; „Slušaj” će samo automatski listati korake.'; return; }
+  var vs = speechSynthesis.getVoices() || [];
+  var pref = ['hr','bs','sr'];
+  voice = null;
+  for(var p=0;p<pref.length && !voice;p++){ for(var i=0;i<vs.length;i++){ if((vs[i].lang||'').toLowerCase().replace('_','-').indexOf(pref[p])===0){ voice=vs[i]; break; } } }
+  if(vs.length && (!voice || (voice.lang||'').toLowerCase().indexOf('hr')!==0)){
+    voiceNote = 'Hrvatski glas nije pronađen na uređaju'+(voice?' (koristi se '+voice.lang+')':'')+'. Android: Postavke → Pretvaranje teksta u govor → Google → instaliraj glasovne podatke za hrvatski.';
+  } else voiceNote = '';
+  var n=document.getElementById('voiceNote'); if(n) n.textContent = voiceNote;
+}
+if(hasTTS){ pickVoice(); try{ speechSynthesis.addEventListener('voiceschanged', pickVoice); }catch(e){ speechSynthesis.onvoiceschanged = pickVoice; } }
+else pickVoice();
+
+var SAY_RULES = [
+  [/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu,''],
+  [/E\. coli/g,'E koli'],[/5\.8S/g,'5 točka 8 S'],
+  [/(\d)\s*[′'’]\s*→\s*(\d)\s*[′'’]/g,'$1 prim prema $2 prim'],[/(\d)\s*[′'’]/g,'$1 prim'],
+  [/(\d)\s*[–-]\s*(\d)/g,'$1 do $2'],[/−\s*(\d)/g,'minus $1'],[/\s*→\s*/g,', pa '],
+  [/σ \(sigma\)/g,'sigma'],[/σ/g,'sigma'],[/\+1\b/g,'plus 1'],[/\s=\s/g,' je '],[/\s\+\s/g,' i '],[/~\s*/g,'oko '],[/≈\s*/g,'otprilike '],[/%/g,' posto'],[/>\s*(\d)/g,'više od $1'],
+  [/\bpb\b|\bbp\b/g,'parova baza'],[/\bnt\b/g,'nukleotida'],
+  [/TFII([A-H])\b/g,'T F dva $1'],[/TFII…/g,'T F dva'],[/\bTF\b/g,'T F'],
+  [/Pol III\b/g,'polimeraza tri'],[/Pol II\b/g,'polimeraza dva'],[/Pol I\b/g,'polimeraza jedan'],
+  [/(polimeraz\w*) III\b/g,'$1 tri'],[/(polimeraz\w*) II\b/g,'$1 dva'],[/(polimeraz\w*) I\b/g,'$1 jedan'],
+  [/m7G/g,'m 7 G'],[/CH₃/g,'C H 3'],[/CpG/g,'C p G'],[/snRNP/g,'es en R N P'],[/snRNA/g,'es en R N A'],
+  [/miRNA/g,'mikro R N A'],[/lncRNA/g,'duga nekodirajuća R N A'],[/rNTP/g,'R N T P'],[/mRNA/g,'em R N A'],[/tRNA/g,'te R N A'],[/rRNA/g,'er R N A'],
+  [/AAUAAA/g,'A A U A A A'],[/TATAA\b/g,'T A T A A'],[/\bGU\b/g,'G U'],[/\bCA\b/g,'C A'],[/\bCTD\b/g,'C T D'],[/\bTBP\b/g,'T B P'],[/\bTAF\b/g,'T A F'],[/\bInr\b/g,'I N R'],
+  [/\bU([1-6])\b/g,'U $1'],[/\s+/g,' ']
+];
+function toSpeech(html){
+  var d=document.createElement('div'); d.innerHTML=html;
+  d.querySelectorAll('p,span,br,li').forEach(function(e){ e.insertAdjacentText('afterend',' . '); });
+  var s=d.textContent; SAY_RULES.forEach(function(r){ s=s.replace(r[0],r[1]); });
+  return s.replace(/(\s*\.\s*){2,}/g,'. ').replace(/:\s*\./g,':').trim();
+}
+function chunks(text){
+  var parts = text.replace(/([.!?…:])\s+/g,'$1\n').split('\n'), out=[];
+  parts.forEach(function(p){ p=p.trim(); if(!p||/^[.\s]+$/.test(p)) return;
+    while(p.length>200){ var i=p.lastIndexOf(', ',200); if(i<60) i=200; out.push(p.slice(0,i+1)); p=p.slice(i+1).trim(); }
+    if(p) out.push(p); });
+  return out;
+}
+var tts = { playing:false, token:0, list:[], idx:0, onDone:null, timer:null };
+function ttsLoad(text,onDone){ tts.list=chunks(text); tts.idx=0; tts.onDone=onDone; }
+function ttsStart(){
+  tts.playing=true; var tok=++tts.token;
+  if(hasTTS){ try{ speechSynthesis.cancel(); }catch(e){} }
+  setTimeout(function(){ ttsNext(tok); }, 60);
+  updatePlayBtn();
+}
+function ttsNext(tok){
+  if(tok!==tts.token || !tts.playing) return;
+  if(tts.idx>=tts.list.length){ var cb=tts.onDone; if(cb) cb(); return; }
+  var txt=tts.list[tts.idx];
+  if(!hasTTS){ tts.timer=setTimeout(function(){ if(tok!==tts.token) return; tts.idx++; ttsNext(tok); }, Math.max(1500, txt.split(' ').length*380/state.rate)); return; }
+  var u=new SpeechSynthesisUtterance(txt); u.lang='hr-HR'; if(voice) u.voice=voice; u.rate=state.rate;
+  u.onend=function(){ if(tok!==tts.token) return; tts.idx++; ttsNext(tok); };
+  u.onerror=function(e){ if(tok!==tts.token) return; if(e && (e.error==='interrupted'||e.error==='canceled')) return; tts.idx++; setTimeout(function(){ ttsNext(tok); },200); };
+  try{ speechSynthesis.speak(u); }catch(e){ tts.idx++; setTimeout(function(){ ttsNext(tok); },500); }
+}
+function ttsPause(){ tts.playing=false; tts.token++; clearTimeout(tts.timer); if(hasTTS){ try{ speechSynthesis.cancel(); }catch(e){} } updatePlayBtn(); }
+function stopTTS(){ ttsPause(); tts.list=[]; tts.idx=0; }
+function updatePlayBtn(){ var b=document.getElementById('playBtn'); if(b) b.textContent = tts.playing ? '⏸ Pauza' : '▶ Slušaj'; }
+
+/* ================= POMOĆNO ================= */
+var app=document.getElementById('app');
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function key(L,i){ return L.id+':'+i; }
+function isDone(L,i){ var s=state.scenes[key(L,i)]; return !!(s&&s.done); }
+function isUnlocked(L,i){ return i===0 || isDone(L,i-1); }
+function allDone(L){ for(var i=0;i<L.scenes.length;i++) if(!isDone(L,i)) return false; return true; }
+function firstOpen(L){ for(var i=0;i<L.scenes.length;i++) if(!isDone(L,i)) return i; return L.scenes.length-1; }
+function norm(s){ return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]/g,''); }
+function setTitle(s){ document.getElementById('ttl').textContent=s; }
+
+/* ================= TEMA ================= */
+function applyTheme(){ if(state.theme) document.documentElement.setAttribute('data-theme',state.theme); else document.documentElement.removeAttribute('data-theme'); }
+applyTheme();
+document.getElementById('themeBtn').onclick=function(){
+  var dark = state.theme ? state.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  state.theme = dark ? 'light' : 'dark'; applyTheme(); saveState();
+};
+document.getElementById('homeBtn').onclick=function(){ location.hash='#/'; };
+
+/* ================= IZBORNIK ================= */
+function daysLeft(){ var n=new Date(), a=new Date(n.getFullYear(),n.getMonth(),n.getDate()), k=new Date(2026,10,26); return Math.round((k-a)/864e5); }
+function renderMenu(){
+  setTitle('Biologija 2 · videopredavanja');
+  var d=daysLeft();
+  var h='<h2>Videopredavanja – 2. kolokvij</h2><p class="muted">'+(d>0?'📅 Do kolokvija (26. 11. 2026.): <b>'+d+' '+(d%10===1&&d%100!==11?'dan':'dana')+'</b>':(d===0?'📅 Kolokvij je <b>danas</b> – sretno! 🍀':'Kolokvij je prošao.'))+'</p>';
+  LECTURES.forEach(function(L){
+    if(L.scenes){
+      var n=L.scenes.length, dn=0; for(var i=0;i<n;i++) if(isDone(L,i)) dn++;
+      var qz=state.quiz[L.id];
+      h+='<a class="card lec" href="#/'+L.id+'/s'+(firstOpen(L)+1)+'"><div class="num">'+L.code.replace('/','/<br>')+'</div><div style="flex:1;min-width:0"><b>'+esc(L.title)+'</b><div class="muted" style="font-size:15px">'+dn+'/'+n+' scena'+(qz?' · kviz najbolje '+qz.best+'/5':'')+'</div><div class="bar"><i style="width:'+Math.round(dn/n*100)+'%"></i></div></div></a>';
+    } else {
+      h+='<div class="card lec dis"><div class="num">'+L.code+'</div><div><b>'+esc(L.title)+'</b><div class="muted" style="font-size:15px">'+(L.status==='other'?'već postoji u tvojoj drugoj igri':'uskoro – nakon odobrenja pokusne verzije')+'</div></div></div>';
+    }
+  });
+  h+='<p class="note">Napredak se sprema u ovom pregledniku (localStorage). Izvor sadržaja: skripta „Biologija, 2. kolokvij”.</p><button class="btn sec" id="resetBtn" style="width:100%">Obriši napredak</button>';
+  app.innerHTML=h;
+  document.getElementById('resetBtn').onclick=function(){ if(confirm('Obrisati sav napredak?')){ state.scenes={}; state.quiz={}; saveState(); renderMenu(); } };
+  window.scrollTo(0,0);
+}
+
+/* ================= SCENA ================= */
+var cur=null;
+function chipsHTML(L,i){
+  var h='<nav class="chips" aria-label="Scene">';
+  for(var k=0;k<L.scenes.length;k++){
+    var cls='chip'+(k===i?' cur':'')+(isDone(L,k)?' done':'')+(isUnlocked(L,k)?'':' lock');
+    h+='<a class="'+cls+'" href="#/'+L.id+'/s'+(k+1)+'" aria-label="Scena '+(k+1)+'">'+(k+1)+'</a>';
+  }
+  h+='<a class="chip'+(i==='kraj'?' cur':'')+(allDone(L)?'':' lock')+'" href="#/'+L.id+'/kraj">Σ Kviz</a></nav>';
+  return h;
+}
+function legendHTML(keys){ return '<div class="legend">'+keys.map(function(k){return '<span><b style="background:'+LEG[k][0]+'"></b>'+LEG[k][1]+'</span>';}).join('')+'</div>'; }
+
+function renderScene(L,i){
+  var S=L.scenes[i], n=S.steps.length;
+  setTitle(L.code+' · scena '+(i+1)+'/'+L.scenes.length);
+  var rates=[0.75,1,1.25,1.5];
+  app.innerHTML = chipsHTML(L,i)+
+    '<h2>'+(i+1)+'. '+esc(S.title)+'</h2>'+
+    '<div class="stage" id="stage">'+S.svg+'</div>'+legendHTML(S.legend)+
+    '<div class="dots" id="dots">'+S.steps.map(function(){return '<i></i>';}).join('')+'</div>'+
+    '<div class="card"><div class="muted" id="stepLbl" style="font-size:14px"></div><div class="txt" id="txt" aria-live="polite"></div>'+
+    '<div class="ctrl"><button class="btn sec" id="prevBtn">◀ Natrag</button><button class="btn sec" id="playBtn">▶ Slušaj</button><button class="btn sec" id="rateBtn" aria-label="Brzina govora">'+state.rate+'×</button><button class="btn" id="nextBtn">Dalje ▶</button></div>'+
+    '<div class="note" id="voiceNote">'+esc(voiceNote)+'</div></div>'+
+    '<section class="card q hidden" id="qbox"></section>'+
+    '<button class="btn" id="nextScene" style="width:100%;margin-top:4px" disabled>'+(i<L.scenes.length-1?'Sljedeća scena →':'Sažetak i kviz →')+'</button>';
+  cur={L:L,i:i,step:0,n:n,svg:document.querySelector('#stage svg'),qShown:false};
+  document.getElementById('prevBtn').onclick=function(){ goStep(cur.step-1); };
+  document.getElementById('nextBtn').onclick=function(){ if(cur.step<n-1) goStep(cur.step+1); else { showQuestion(); document.getElementById('qbox').scrollIntoView({behavior:'smooth',block:'start'}); } };
+  document.getElementById('playBtn').onclick=function(){
+    if(tts.playing) ttsPause();
+    else { if(!tts.list.length || tts.idx>=tts.list.length) loadStepSpeech(); ttsStart(); }
+  };
+  document.getElementById('rateBtn').onclick=function(){
+    var k=(rates.indexOf(state.rate)+1)%rates.length; state.rate=rates[k]; saveState(); this.textContent=state.rate+'×';
+    if(tts.playing){ ttsPause(); ttsStart(); }
+  };
+  document.getElementById('nextScene').onclick=function(){ stopTTS(); location.hash = i<L.scenes.length-1 ? '#/'+L.id+'/s'+(i+2) : '#/'+L.id+'/kraj'; };
+  applyStep(cur.svg,-1);
+  void cur.svg.getBoundingClientRect();
+  if(isDone(L,i)) showQuestion();
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ goStep(0,true); }); });
+  window.scrollTo(0,0);
+}
+function applyStep(svgEl,k){
+  svgEl.querySelectorAll('[data-s]').forEach(function(el){
+    var v=el.getAttribute('data-s'), a, b;
+    if(v.indexOf('-')>0){ var p=v.split('-'); a=+p[0]; b=+p[1]; } else { a=+v; b=99; }
+    var on = k>=a && k<=b; el.classList.toggle('off',!on); el.classList.toggle('on',on);
+  });
+  svgEl.querySelectorAll('[data-anim]').forEach(function(el){
+    var props={}, all={};
+    el.getAttribute('data-anim').split(';').forEach(function(e){
+      var c=e.indexOf(':'); if(c<0) return; var kk=+e.slice(0,c);
+      e.slice(c+1).split('|').forEach(function(pv){ var j=pv.indexOf('='); var p=pv.slice(0,j).trim(), val=pv.slice(j+1).trim(); all[p]=1; if(kk<=k) props[p]=val; });
+    });
+    Object.keys(all).forEach(function(p){ el.style.setProperty(p, props[p]!==undefined?props[p]:''); });
+  });
+}
+function loadStepSpeech(){
+  var S=cur.L.scenes[cur.i], txt=toSpeech(S.steps[cur.step].html);
+  if(cur.step===0) txt='Scena '+(cur.i+1)+'. '+toSpeech(S.title)+'. '+txt;
+  ttsLoad(txt, onStepSpoken);
+}
+function onStepSpoken(){
+  if(!cur) return;
+  if(cur.step<cur.n-1){ var tok=tts.token; setTimeout(function(){ if(tok===tts.token && tts.playing) goStep(cur.step+1); },700); }
+  else {
+    showQuestion();
+    var qb=document.getElementById('qbox'); if(qb) qb.scrollIntoView({behavior:'smooth',block:'start'});
+    var q=cur.L.scenes[cur.i].q;
+    ttsLoad('Pitanje. '+toSpeech(q.text)+(q.opts?' Ponuđeni odgovori: '+q.opts.map(function(o,j){return String.fromCharCode(65+j)+': '+toSpeech(o.t);}).join('. '):''), function(){ ttsPause(); tts.list=[]; });
+    var tok=++tts.token; ttsNext(tok);
+  }
+}
+function goStep(k,first){
+  if(!cur) return; k=Math.max(0,Math.min(cur.n-1,k));
+  cur.step=k; applyStep(cur.svg,k);
+  var S=cur.L.scenes[cur.i], txt=document.getElementById('txt');
+  txt.classList.add('fade');
+  setTimeout(function(){ txt.innerHTML=S.steps[k].html; txt.classList.remove('fade'); }, first?0:180);
+  document.getElementById('stepLbl').textContent='Korak '+(k+1)+' / '+cur.n;
+  document.querySelectorAll('#dots i').forEach(function(d,j){ d.classList.toggle('on',j<=k); });
+  document.getElementById('prevBtn').disabled = k===0;
+  document.getElementById('nextBtn').textContent = k<cur.n-1 ? 'Dalje ▶' : 'Pitanje ▼';
+  if(k===cur.n-1) showQuestion();
+  if(!first || tts.playing){ var was=tts.playing; ttsPause(); loadStepSpeech(); if(was) ttsStart(); }
+  else loadStepSpeech();
+}
+
+/* ================= PITANJA ================= */
+function record(L,i,correct){
+  var k=key(L,i), s=state.scenes[k]||{};
+  if(s.first===undefined) s.first=correct;
+  if(correct){ s.done=true; s.at=Date.now(); }
+  state.scenes[k]=s; saveState();
+}
+function sceneSolved(){
+  var b=document.getElementById('nextScene'); if(b) b.disabled=false;
+  var c=document.querySelectorAll('.chips .chip');
+  if(c[cur.i]) c[cur.i].classList.add('done');
+  if(c[cur.i+1]) c[cur.i+1].classList.remove('lock');
+  if(allDone(cur.L) && c[c.length-1]) c[c.length-1].classList.remove('lock');
+}
+function showQuestion(){
+  if(!cur || cur.qShown) return; cur.qShown=true;
+  var L=cur.L, i=cur.i, q=L.scenes[i].q, box=document.getElementById('qbox'), solved=isDone(L,i);
+  box.classList.remove('hidden');
+  var h='<h3>❓ Pitanje</h3><p>'+q.text+'</p>';
+  if(q.type==='mc'){
+    q.opts.forEach(function(o,j){ h+='<button class="opt" data-j="'+j+'">'+String.fromCharCode(65+j)+') '+o.t+'</button>'; });
+    h+='<div id="fb"></div>';
+    box.innerHTML=h;
+    var btns=box.querySelectorAll('.opt');
+    var reveal=function(j){
+      btns.forEach(function(b,m){ if(q.opts[m].ok){ b.classList.add('ok'); } b.disabled=true; });
+    };
+    if(solved){ reveal(); document.getElementById('fb').innerHTML='<div class="fb ok">✅ Već riješeno. '+q.opts.filter(function(o){return o.ok;})[0].why+'</div>'; sceneSolved(); }
+    btns.forEach(function(b){ b.onclick=function(){
+      var j=+b.dataset.j, o=q.opts[j], fb=document.getElementById('fb');
+      if(o.ok){ reveal(j); fb.innerHTML='<div class="fb ok">✅ '+o.why+'</div>'; record(L,i,true); sceneSolved(); }
+      else { b.classList.add('bad'); b.disabled=true; fb.innerHTML='<div class="fb bad">❌ Nije točno. '+o.why+' Pokušaj ponovno!</div>'; record(L,i,false); }
+    }; });
+  } else {
+    h+='<input id="sa" autocomplete="off" autocapitalize="off" placeholder="Upiši odgovor…" aria-label="Odgovor"><div class="row"><button class="btn" id="saBtn">Provjeri</button><button class="btn sec hidden" id="saShow">Prikaži odgovor</button></div><div id="fb"></div>';
+    box.innerHTML=h;
+    var inp=document.getElementById('sa'), fb=document.getElementById('fb'), tries=0;
+    var win=function(msg){ inp.disabled=true; document.getElementById('saBtn').disabled=true; fb.innerHTML='<div class="fb ok">'+msg+'</div>'; sceneSolved(); };
+    if(solved){ inp.value=q.answer; win('✅ Već riješeno. '+q.why); }
+    var check=function(){
+      var v=norm(inp.value); if(!v) return;
+      if(q.accept.indexOf(v)>=0){ record(L,i,true); win('✅ Točno: <b>'+q.answer+'</b>. '+q.why); return; }
+      tries++; record(L,i,false);
+      var msg=null; for(var m=0;m<q.wrongMap.length;m++){ if(v.indexOf(q.wrongMap[m][0])>=0){ msg=q.wrongMap[m][1]; break; } }
+      fb.innerHTML='<div class="fb bad">❌ Nije točno. '+(msg||'')+' '+q.hint+'</div>';
+      if(tries>=2) document.getElementById('saShow').classList.remove('hidden');
+    };
+    document.getElementById('saBtn').onclick=check;
+    inp.onkeydown=function(e){ if(e.key==='Enter') check(); };
+    document.getElementById('saShow').onclick=function(){ record(L,i,true); inp.value=q.answer; this.classList.add('hidden'); win('Točan odgovor: <b>'+q.answer+'</b>. '+q.why); };
+  }
+}
+
+/* ================= SAŽETAK + KVIZ ================= */
+function renderEnd(L){
+  if(!allDone(L)){ location.hash='#/'+L.id+'/s'+(firstOpen(L)+1); return; }
+  setTitle(L.code+' · sažetak i kviz');
+  var h=chipsHTML(L,'kraj')+'<h2>Σ Sažetak: '+esc(L.title)+'</h2><div class="card"><ul class="sum">'+L.summary.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ul>'+
+    '<button class="btn sec" id="sumPlay" style="width:100%">▶ Poslušaj sažetak</button></div><h2>🎯 Mini kviz (5 pitanja)</h2><p class="muted">Svako pitanje ima jedan pokušaj.</p>';
+  L.quiz.forEach(function(q,qi){
+    h+='<section class="card q" data-qi="'+qi+'"><p><b>'+(qi+1)+'.</b> '+q.text+'</p>'+q.opts.map(function(o,j){return '<button class="opt" data-j="'+j+'">'+String.fromCharCode(65+j)+') '+o.t+'</button>';}).join('')+'<div class="fbq"></div></section>';
+  });
+  h+='<div class="card hidden" id="res"></div><div class="row"><button class="btn sec" id="again">↻ Ponovi kviz</button><a class="btn" style="display:grid;place-items:center;text-decoration:none" href="#/">Izbornik</a></div>';
+  app.innerHTML=h; window.scrollTo(0,0);
+  var answers={};
+  document.getElementById('sumPlay').onclick=function(){
+    if(tts.playing){ ttsPause(); this.textContent='▶ Poslušaj sažetak'; return; }
+    var self=this; ttsLoad('Sažetak. '+L.summary.map(toSpeech).join('. '), function(){ ttsPause(); self.textContent='▶ Poslušaj sažetak'; });
+    ttsStart(); this.textContent='⏸ Pauza';
+  };
+  app.querySelectorAll('section.q').forEach(function(sec){
+    var qi=+sec.dataset.qi, q=L.quiz[qi], btns=sec.querySelectorAll('.opt');
+    btns.forEach(function(b){ b.onclick=function(){
+      var j=+b.dataset.j, o=q.opts[j]; answers[qi]=!!o.ok;
+      btns.forEach(function(x,m){ x.disabled=true; if(q.opts[m].ok) x.classList.add('ok'); });
+      if(!o.ok) b.classList.add('bad');
+      var right=q.opts.filter(function(x){return x.ok;})[0];
+      sec.querySelector('.fbq').innerHTML = o.ok ? '<div class="fb ok">✅ '+o.why+'</div>' : '<div class="fb bad">❌ '+o.why+'<br>✔️ Točno je: <b>'+right.t+'</b> – '+right.why+'</div>';
+      if(Object.keys(answers).length===L.quiz.length){
+        var sc=0; Object.keys(answers).forEach(function(k){ if(answers[k]) sc++; });
+        var prev=state.quiz[L.id]||{best:0}; state.quiz[L.id]={best:Math.max(prev.best||0,sc),last:sc,at:Date.now()}; saveState();
+        var r=document.getElementById('res'); r.classList.remove('hidden');
+        r.innerHTML='<div class="score">Rezultat: '+sc+' / '+L.quiz.length+'</div><p>'+(sc===5?'🏆 Savršeno! Spreman/na za kolokvij iz ovog dijela.':sc>=3?'👍 Dobro! Pogledaj objašnjenja pogrešnih pa ponovi.':'💪 Vrati se na scene s pogreškama i ponovi kviz.')+'</p><p class="muted">Najbolji rezultat: '+state.quiz[L.id].best+'/5</p>';
+        r.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+    }; });
+  });
+  document.getElementById('again').onclick=function(){ renderEnd(L); };
+}
+
+/* ================= RUTER ================= */
+function route(){
+  stopTTS(); cur=null;
+  var h=location.hash.replace(/^#\/?/,''), parts=h.split('/'), L=null;
+  for(var k=0;k<LECTURES.length;k++) if(LECTURES[k].id===parts[0] && LECTURES[k].scenes) L=LECTURES[k];
+  if(!L) return renderMenu();
+  if(parts[1]==='kraj') return renderEnd(L);
+  var i=parseInt((parts[1]||'s1').slice(1),10)-1;
+  if(isNaN(i)||i<0||i>=L.scenes.length) i=0;
+  if(!isUnlocked(L,i)){ i=firstOpen(L); history.replaceState(null,'','#/'+L.id+'/s'+(i+1)); }
+  renderScene(L,i);
+}
+window.addEventListener('hashchange',route);
+window.addEventListener('pagehide',function(){ stopTTS(); });
+route();
+</script>
+</body>
+</html>
