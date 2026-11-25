@@ -2649,7 +2649,7 @@ function renderMenu(){
   var ib=state.quiz.ispit;
   h+='<a class="card lec" href="#ispit" style="border-color:var(--accent)"><div class="num">🎯</div><div style="flex:1;min-width:0"><b>Probni ispit</b><div class="muted" style="font-size:15px">'+EXAM.length+' pitanja · format kolokvija (1 i 2 točna)'+(ib?' · najbolje '+ib.best+'/'+EXAM.length:'')+'</div></div></a>';
   var sb=state.quiz.stari;
-  h+='<a class="card lec" href="#stari" style="border-color:var(--accent)"><div class="num">📸</div><div style="flex:1;min-width:0"><b>Stari ispit (tvoja pitanja)</b><div class="muted" style="font-size:15px">'+OLD.length+' pitanja s fotografija, samo iz skripte'+(sb?' · najbolje '+sb.best+'/'+OLD.length:'')+'</div></div></a>';
+  h+='<a class="card lec" href="#stari" style="border-color:var(--accent)"><div class="num">📸</div><div style="flex:1;min-width:0"><b>Stari ispit (tvoja pitanja)</b><div class="muted" style="font-size:15px">'+OLD.length+' pitanja s fotografija starih ispita'+(sb?' · najbolje '+sb.best+'/'+OLD.length:'')+'</div></div></a>';
   LECTURES.forEach(function(L){
     if(L.scenes){
       var n=L.scenes.length, dn=0; for(var i=0;i<n;i++) if(isDone(L,i)) dn++;
@@ -3179,7 +3179,7 @@ function renderExam(shuffled,key){
   if(shuffled){ one=shuffle(one.slice()); two=shuffle(two.slice()); }
   var list=one.concat(two).concat(three).map(function(q){ return {q:q, order: q.label?[]:(shuffled ? shuffle(q.opts.map(function(_,i){return i;})) : q.opts.map(function(_,i){return i;}))}; });
   var best=state.quiz[key];
-  var h='<h2>'+NAME+'</h2><p class="muted">'+(key==='stari'?SET.length+' pitanja s tvojih fotografija starih ispita, doslovno – samo ona koja pokriva skripta.':SET.length+' pitanja u formatu kolokvija, sva iz skripte.')+' Svako pitanje ima jedan pokušaj.'+(best?' Najbolji rezultat: <b>'+best.best+'/'+SET.length+'</b>.':'')+'</p>';
+  var h='<h2>'+NAME+'</h2><p class="muted">'+(key==='stari'?SET.length+' pitanja s tvojih fotografija starih ispita, doslovno. Pitanja izvan skripte označena su kao „dodatno objašnjenje”.':SET.length+' pitanja u formatu kolokvija, sva iz skripte.')+' Svako pitanje ima jedan pokušaj.'+(best?' Najbolji rezultat: <b>'+best.best+'/'+SET.length+'</b>.':'')+'</p>';
   list.forEach(function(it,n){
     if(n===0) h+='<h3>UPUTA I (jedan točan odgovor)</h3>';
     if(n===one.length) h+='<h3>UPUTA II (dva točna odgovora)</h3>';
@@ -3296,7 +3296,37 @@ var OLD = [
   {t:'ubikvitinom', ok:true, why:'Točno – ubikvitin je biljeg za brzu proteolizu.'},
   {t:'peptidil-prolil-izomerazom', why:'PPI je enzim smatanja (prolin cis/trans).'},
   {t:'metilacijom', why:'Nije biljeg za proteasom.'}]},
+ {lec:'p12', text:'Prilikom oplodnje polispermiju kod sisavaca sprječava:', note:'Nije u skripti – dodatno objašnjenje (opće znanje iz biologije). Uvršteno jer je bilo na starom ispitu.', opts:[
+  {t:'akrosomska reakcija', why:'Akrosomska reakcija omogućuje spermiju da prodre kroz ovojnice jajne stanice – ne sprječava polispermiju.'},
+  {t:'kortikalna reakcija', ok:true, why:'Točno – nakon ulaska prvog spermija kortikalne granule izbace sadržaj i ovojnica postane neprohodna za druge spermije.'},
+  {t:'centrioli u glavi spermija', why:'Centrioli sudjeluju u stvaranju diobenog vretena zigote, ne u blokadi polispermije.'},
+  {t:'ulazak Ca²⁺ iona u glavu spermija', why:'Porast Ca²⁺ događa se u jajnoj stanici i POKREĆE kortikalnu reakciju; sam po sebi u glavi spermija ne sprječava polispermiju.'}]},
+ {lec:'p19', text:'Primjer fakultativnog heterokromatina je:', note:'Nije u skripti – dodatno objašnjenje (opće znanje iz biologije). Uvršteno jer je bilo na starom ispitu. U skripti (P19) piše samo: heterokromatin = zbijen kromatin s utišanim genima.', opts:[
+  {t:'inaktivni X kromosom', ok:true, why:'Točno – u ženskim stanicama jedan X je utišan (Barrovo tijelo); „fakultativan” jer je isti kromosom u drugim stanicama aktivan.'},
+  {t:'politeni kromosom', why:'Politeni kromosomi (npr. u žlijezdama slinovnicama vinske mušice) nastaju višestrukom replikacijom bez diobe.'},
+  {t:'akrocentrični kromosom', why:'Akrocentričan opisuje položaj centromere, ne stanje kromatina.'},
+  {t:'PAR regija Y kromosoma', why:'PAR je pseudoautosomalna regija homologna X-u – sparuje se i rekombinira u mejozi.'}]},
+ {lec:'p14', text:'Nukleolarni organizatori su:', note:'Nije u skripti – dodatno objašnjenje (opće znanje iz biologije). Uvršteno jer je bilo na starom ispitu.', opts:[
+  {t:'centromere svih kromosoma', why:'Centromere su mjesta vezanja vretena.'},
+  {t:'dijelovi pojedinih kromosoma koji organiziraju jezgru', why:'Organiziraju jezgricu, ne cijelu jezgru.'},
+  {t:'organizacijske jedinice polinukleotida', why:'Nije pojam.'},
+  {t:'dijelovi pojedinih kromosoma koji organiziraju jezgricu', ok:true, why:'Točno – nalaze se na kratkim krakovima akrocentričnih kromosoma (13, 14, 15, 21, 22) i sadrže gene za rRNA.'}]},
+ {lec:'p12', text:'U intersticijskom prostoru između sjemenih kanalića nalaze se:', note:'Nije u skripti – dodatno objašnjenje (opće znanje iz biologije). Uvršteno jer je bilo na starom ispitu.', opts:[
+  {t:'Sertolijeve stanice', why:'Sertolijeve stanice su UNUTAR sjemenih kanalića (hrane spermatogene stanice).'},
+  {t:'Leydigove stanice', ok:true, why:'Točno – intersticijske stanice koje luče testosteron.'},
+  {t:'spermatogonije', why:'Spermatogonije su u stijenci sjemenih kanalića.'},
+  {t:'Graafovi folikuli', why:'Graafovi folikuli su u jajniku.'}]},
  /* UPUTA II */
+ {lec:'p12', two:true, text:'Jajna stanica morskog ježinca:', note:'Nije u skripti – dodatno objašnjenje (opće znanje iz biologije). Uvršteno jer je bilo na starom ispitu.', opts:[
+  {t:'je izolecitalna', ok:true, why:'Točno – ima malo žumanjka, jednoliko raspoređenog.'},
+  {t:'sadrži bindin receptore na vitelinoj membrani', ok:true, why:'Točno – bindin iz akrosoma spermija veže se na receptore na vitelinoj ovojnici (vrsno specifično prepoznavanje).'},
+  {t:'sadrži bindin receptore na plazmatskoj membrani', why:'Netočno – receptori su na vitelinoj ovojnici.'},
+  {t:'nastaje oplodnjom', why:'Netočno – oplodnjom nastaje zigota, a jajna stanica nastaje oogenezom.'}]},
+ {lec:'p14', two:true, text:'Nađite <b>točne</b> tvrdnje:', note:'Opcije a), b) i d) su iz skripte (P14). Opcija c) – „slaba vitalnost i kratak život kod trisomije 18” – nije u skripti, to je dodatno objašnjenje (opće znanje).', opts:[
+  {t:'mozaičan kariotip nastaje kao posljedica nepravilnog razdvajanja kromosoma tijekom gametogeneze', why:'Netočno – mozaik nastaje greškom u mitozi nakon oplodnje.'},
+  {t:'osobe s kariotipom 47,XXY nemaju problema s reprodukcijom', why:'Netočno – Klinefelter: azoospermija, neplodnost.'},
+  {t:'trisomiju 18 opisuje izrazito slaba vitalnost i kratak životni vijek', ok:true, why:'Točno (dodatno objašnjenje – nije u skripti).'},
+  {t:'izostanak ženskih spolnih karakteristika i neplodnost svojstveni su za sindrom Turner', ok:true, why:'Točno.'}]},
  {lec:'p12', two:true, text:'Odredite <b>točne</b> tvrdnje vezane uz oogenezu:', note:'Oogeneza nije posebno opisana u skripti – odgovor se izvodi iz mejoze (P12): prije mejoze kromosomi su nakon S faze dvokromatidni; nakon MI 23 dvokromatidna; nakon MII 23 jednokromatidna; rekombinacija završava u pahitenu, a u dijakinezi je terminalizacija kijazmi.', opts:[
   {t:'primarna oocita ima diploidan broj jednokromatidnih kromosoma', why:'Netočno – nakon S faze (prije mejoze) kromosomi su dvokromatidni.'},
   {t:'sekundarne oocite nastaju prvom mejotičkom diobom i imaju haploidan broj dvokromatidnih kromosoma', ok:true, why:'Točno – nakon MI: 23 dvokromatidna kromosoma.'},
