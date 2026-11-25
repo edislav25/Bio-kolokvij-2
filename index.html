@@ -3115,19 +3115,80 @@ var EXAM = [
   {t:'ne zahtijeva homologiju slijeda', why:'Netočno – to vrijedi za transpoziciju.'}]}
 ];
 
+
+function boxL(x,y,l){ return '<rect x="'+(x-11)+'" y="'+(y-11)+'" width="22" height="22" rx="4" style="fill:var(--card);stroke:var(--ink);stroke-width:1.6"/>'+t(x,y+4,l,'s b'); }
+function lineL(x1,y1,x2,y2){ return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" style="stroke:var(--ink);stroke-width:1.2"/>'; }
+function figTrans(){
+  var cod=['AUG','CUU','AGC','GGA','CAA'], o='';
+  o+='<line x1="20" y1="60" x2="340" y2="60" class="rn"/>'+t(14,64,'5′','s b cR','end')+t(346,64,'3′','s b cR','start');
+  cod.forEach(function(c,i){ o+=chip(40+i*58,48,54,22,c,ST.rna); });
+  /* peptidil tRNA na AGC (x=183), aminoacil na GGA (x=241) */
+  o+='<path d="M179 100 L179 140 M187 100 L187 140" style="stroke:var(--sn);stroke-width:4"/><rect x="161" y="78" width="44" height="22" rx="6" style="fill:var(--sn);fill-opacity:.25;stroke:var(--sn);stroke-width:2"/>'+t(183,93,'UCG','s b');
+  o+='<path d="M237 110 L237 150 M245 110 L245 150" style="stroke:var(--sn);stroke-width:4"/><rect x="219" y="88" width="44" height="22" rx="6" style="fill:var(--sn);fill-opacity:.25;stroke:var(--sn);stroke-width:2"/>'+t(241,103,'CCU','s b');
+  o+='<line x1="230" y1="130" x2="205" y2="125" class="ak"/>';
+  [['Met',60],['Leu',110],['Ser',160]].forEach(function(a,i){ o+=chip(a[1],150,40,22,a[0],ST.el,'s b'); });
+  o+='<line x1="100" y1="161" x2="110" y2="161" style="stroke:var(--hl);stroke-width:3"/><line x1="150" y1="161" x2="160" y2="161" style="stroke:var(--hl);stroke-width:3"/><line x1="183" y1="140" x2="183" y2="150" style="stroke:var(--sn);stroke-width:3"/>';
+  o+=chip(222,160,40,22,'Gly',ST.el,'s b')+'<line x1="241" y1="150" x2="241" y2="160" style="stroke:var(--sn);stroke-width:3"/>';
+  o+=boxL(30,25,'A')+lineL(41,30,60,50);
+  o+=boxL(130,110,'B')+lineL(141,112,177,120);
+  o+=boxL(300,130,'C')+lineL(289,130,248,132);
+  o+=boxL(110,85,'D')+lineL(121,87,160,89);
+  o+=boxL(300,25,'E')+lineL(289,30,262,48);
+  o+=boxL(105,205,'F')+lineL(105,194,105,163);
+  return '<svg viewBox="0 0 360 225" role="img" aria-label="Slika: translacija">'+o+'</svg>';
+}
+function figFork(){
+  var o='';
+  function P(dir,t,off){ var dx=dir<0?-0.664:0.664, dy=0.748, nx=dir<0?0.748:-0.748, ny=0.664; var x0=dir<0?174:186; return [x0+dx*t+nx*(off||0), 104+dy*t+ny*(off||0)]; }
+  function seg(dir,t1,t2,off,st){ var a=P(dir,t1,off), b=P(dir,t2,off); return '<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" style="'+st+'"/>'; }
+  o+='<line x1="174" y1="8" x2="174" y2="104" class="cd"/><line x1="186" y1="8" x2="186" y2="104" class="ct"/>'+ticks(176,176,1,0,0);
+  for(var y=14;y<100;y+=9) o+='<line x1="176" y1="'+y+'" x2="184" y2="'+y+'" class="gr"/>';
+  o+=seg(-1,0,200,0,'stroke:var(--dna1);stroke-width:4')+seg(1,0,200,0,'stroke:var(--dna2);stroke-width:4');
+  /* vodeći lanac */
+  o+=seg(1,22,200,9,'stroke:var(--enz);stroke-width:4');
+  /* okazaki fragmenti */
+  [[55,86],[100,131],[145,195]].forEach(function(f,i){ o+=seg(-1,f[0],f[1],9,'stroke:var(--enz);stroke-width:4'); if(i===0) o+=seg(-1,f[0],f[0]+8,9,'stroke:var(--hl);stroke-width:5'); });
+  var e;
+  e=[180,36]; o+='<ellipse cx="180" cy="36" rx="16" ry="9" style="fill:var(--ph)"/>';
+  o+='<polygon points="168,92 192,92 180,112" style="fill:var(--sn)"/>';
+  [18,32].forEach(function(tt){ var q=P(-1,tt,-6); o+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="5" style="fill:var(--mir)"/>'; });
+  var pr=P(-1,45,12); o+='<rect x="'+(pr[0]-9)+'" y="'+(pr[1]-6)+'" width="18" height="12" rx="3" style="fill:var(--dna1)"/>';
+  var pl=P(-1,86,10); o+='<ellipse cx="'+pl[0]+'" cy="'+pl[1]+'" rx="11" ry="8" style="fill:var(--el)"/>';
+  var lg=P(-1,138,10); o+='<circle cx="'+lg[0]+'" cy="'+lg[1]+'" r="6" style="fill:var(--tf)"/>';
+  var pv=P(1,24,10); o+='<ellipse cx="'+pv[0]+'" cy="'+pv[1]+'" rx="11" ry="8" style="fill:var(--el)"/>';
+  var pi=P(-1,58,9), hs=P(-1,175,9), ld=P(1,150,9), ss=P(-1,25,-6);
+  o+=boxL(330,36,'A')+lineL(319,36,197,36);
+  o+=boxL(330,90,'B')+lineL(319,92,192,100);
+  o+=boxL(30,70,'C')+lineL(41,72,ss[0]-4,ss[1]);
+  o+=boxL(30,110,'D')+lineL(41,112,pr[0]-9,pr[1]);
+  o+=boxL(30,145,'E')+lineL(41,146,pi[0],pi[1]);
+  o+=boxL(30,180,'F')+lineL(41,181,pl[0]-11,pl[1]);
+  o+=boxL(30,215,'G')+lineL(41,214,lg[0]-6,lg[1]);
+  o+=boxL(130,262,'H')+lineL(130,251,hs[0]+4,hs[1]+2);
+  o+=boxL(330,145,'I')+lineL(319,145,pv[0]+11,pv[1]);
+  o+=boxL(330,250,'J')+lineL(319,248,ld[0]+4,ld[1]);
+  return '<svg viewBox="0 0 360 280" role="img" aria-label="Slika: replikacijska rašlja">'+o+'</svg>';
+}
+
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var x=a[i]; a[i]=a[j]; a[j]=x; } return a; }
 function lecCode(id){ for(var i=0;i<LECTURES.length;i++) if(LECTURES[i].id===id) return LECTURES[i].code; return id; }
 function renderExam(shuffled,key){
   key=key||'ispit'; var SET=key==='stari'?OLD:EXAM, NAME=key==='stari'?'📸 Stari ispit':'🎯 Probni ispit';
   setTitle(NAME.slice(3));
-  var one=SET.filter(function(q){return !q.two;}), two=SET.filter(function(q){return q.two;});
+  var one=SET.filter(function(q){return !q.two&&!q.label;}), two=SET.filter(function(q){return q.two;}), three=SET.filter(function(q){return q.label;});
   if(shuffled){ one=shuffle(one.slice()); two=shuffle(two.slice()); }
-  var list=one.concat(two).map(function(q){ return {q:q, order: shuffled ? shuffle(q.opts.map(function(_,i){return i;})) : q.opts.map(function(_,i){return i;})}; });
+  var list=one.concat(two).concat(three).map(function(q){ return {q:q, order: q.label?[]:(shuffled ? shuffle(q.opts.map(function(_,i){return i;})) : q.opts.map(function(_,i){return i;}))}; });
   var best=state.quiz[key];
   var h='<h2>'+NAME+'</h2><p class="muted">'+(key==='stari'?SET.length+' pitanja s tvojih fotografija starih ispita, doslovno – samo ona koja pokriva skripta.':SET.length+' pitanja u formatu kolokvija, sva iz skripte.')+' Svako pitanje ima jedan pokušaj.'+(best?' Najbolji rezultat: <b>'+best.best+'/'+SET.length+'</b>.':'')+'</p>';
   list.forEach(function(it,n){
     if(n===0) h+='<h3>UPUTA I (jedan točan odgovor)</h3>';
     if(n===one.length) h+='<h3>UPUTA II (dva točna odgovora)</h3>';
+    if(three.length && n===one.length+two.length) h+='<h3>UPUTA III (opis slika)</h3>';
+    if(it.q.label){ h+='<section class="card q" data-n="'+n+'"><p><b>'+(n+1)+'.</b> '+it.q.text+' <span class="muted" style="font-size:14px">('+lecCode(it.q.lec)+')</span></p>'+
+      '<ol style="margin:4px 0 8px;padding-left:22px;font-size:15px">'+it.q.terms.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol>'+
+      '<div class="stage">'+window[it.q.svgf]()+'</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px">'+it.q.boxes.map(function(b,k){ return '<label style="display:flex;align-items:center;gap:6px"><b>'+b[0]+'</b><select data-k="'+k+'" style="flex:1;min-width:0;min-height:44px;font:inherit;font-size:15px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"><option value="">–</option>'+it.q.terms.map(function(x,ti){return '<option value="'+(ti+1)+'">'+(ti+1)+'. '+x+'</option>';}).join('')+'</select></label>'; }).join('')+'</div>'+
+      '<button class="btn" data-lcheck style="width:100%;margin-top:10px">Provjeri</button><div class="fbq"></div></section>'; return; }
     h+='<section class="card q" data-n="'+n+'"><p><b>'+(n+1)+'.</b> '+it.q.text+' <span class="muted" style="font-size:14px">('+lecCode(it.q.lec)+')</span></p>'+
       it.order.map(function(oi,k){ return '<button class="opt" data-j="'+oi+'">'+String.fromCharCode(97+k)+') '+it.q.opts[oi].t+'</button>'; }).join('')+
       (it.q.two?'<button class="btn" data-check style="width:100%;margin-top:4px" disabled>Provjeri (odaberi 2)</button>':'')+'<div class="fbq"></div></section>';
@@ -3149,6 +3210,7 @@ function renderExam(shuffled,key){
   }
   app.querySelectorAll('section.q').forEach(function(sec){
     var n=+sec.dataset.n, q=list[n].q, btns=sec.querySelectorAll('.opt'), fb=sec.querySelector('.fbq');
+    if(q.label){ var lb=sec.querySelector('[data-lcheck]'); lb.onclick=function(){ var ok=0, lines=[]; sec.querySelectorAll('select').forEach(function(s){ var b=q.boxes[+s.dataset.k], good=(+s.value===b[1]); if(good) ok++; s.style.borderColor=good?'var(--ok)':'var(--bad)'; s.style.background=good?'var(--okBg)':'var(--badBg)'; s.disabled=true; lines.push((good?'✅ ':'❌ ')+'<b>'+b[0]+'</b> = '+b[1]+'. '+q.terms[b[1]-1]); }); lb.classList.add('hidden'); var all=ok===q.boxes.length; fb.innerHTML='<div class="fb '+(all?'ok':'bad')+'">Točno '+ok+' / '+q.boxes.length+'<br>'+lines.join('<br>')+'<br><br>'+q.why+'</div>'; done(n,all); }; return; }
     function reveal(sel){
       btns.forEach(function(b){ var o=q.opts[+b.dataset.j]; b.disabled=true; if(o.ok) b.classList.add('ok'); else if(sel.indexOf(+b.dataset.j)>=0) b.classList.add('bad'); });
       var good=sel.every(function(j){return q.opts[j].ok;}) && sel.length===(q.two?2:1);
@@ -3209,6 +3271,31 @@ var OLD = [
   {t:'acentrični fragmenti', ok:true, why:'Točno.'},
   {t:'povratne mutacije', why:'Genske promjene.'},
   {t:'restrikcijski fragmenti', why:'Nije citogenetika.'}]},
+ {lec:'p18', text:'Aminoacil-tRNA sintetaza:', opts:[
+  {t:'veže se na A mjesto ribosoma', why:'Na A mjesto ulazi aminoacil-<b>tRNA</b>, ne sintetaza.'},
+  {t:'katalizira vezivanje aminokiselina s odgovarajućim molekulama tRNA', ok:true, why:'Točno – uz ATP, preko aminoacil-AMP.'},
+  {t:'sudjeluje u procesu elongacije polinukleotidnog lanca', why:'Polinukleotidni lanac = DNA/RNA; sintetaza radi s aminokiselinama.'},
+  {t:'katalizira stvaranje peptidne veze', why:'Peptidnu vezu stvara peptidil transferaza (rRNA velike podjedinice).'}]},
+ {lec:'p18', text:'Reakcija koja se <b>ne događa</b> na ribosomu prilikom elongacije polipeptidnog lanca je:', opts:[
+  {t:'vezivanje aminoacil-tRNA na A mjesto', why:'To se događa na ribosomu (1. korak elongacije).'},
+  {t:'stvaranje peptidne veze u reakciji peptidil transferaze', why:'To se događa na ribosomu (velika podjedinica).'},
+  {t:'vezivanje aminokiseline za specifičnu t-RNA', ok:true, why:'Točno – to radi aminoacil-tRNA sintetaza PRIJE dolaska na ribosom.'},
+  {t:'pomicanje ribosoma prema 3′ kraju mRNA', why:'To je translokacija – događa se na ribosomu (5′→3′).'}]},
+ {lec:'p13', text:'Apoptosom je proteinski kompleks koji u svoj sastav <b>ne uključuje</b>:', opts:[
+  {t:'Apaf-1', why:'Apaf-1 JEST dio apoptosoma.'},
+  {t:'kaspazu-9', why:'Kaspaza-9 JEST dio apoptosoma.'},
+  {t:'citokrom c', why:'Citokrom c JEST dio apoptosoma.'},
+  {t:'TNF ligand', ok:true, why:'Točno – TNF je ligand smrti ekstrinzičkog puta (DISC), nije dio apoptosoma.'}]},
+ {lec:'p14', text:'Nebalansirana strukturna promjena kromosoma je:', opts:[
+  {t:'inverzija', why:'Inverzija je balansirana.'},
+  {t:'prstenasti (ring) kromosom', ok:true, why:'Točno – acentrični fragmenti se gube (delecija).'},
+  {t:'Robertsonova translokacija', why:'Robertsonova translokacija je balansirana (nosilac fenotipski normalan).'},
+  {t:'recipročna translokacija', why:'Recipročna translokacija je balansirana.'}]},
+ {lec:'p19', text:'Citosolni proteini namijenjeni za brzu proteolizu u proteasomu obilježavaju se:', opts:[
+  {t:'fosforilacijom', why:'Fosforilacija je reverzibilni prekidač aktivnosti.'},
+  {t:'ubikvitinom', ok:true, why:'Točno – ubikvitin je biljeg za brzu proteolizu.'},
+  {t:'peptidil-prolil-izomerazom', why:'PPI je enzim smatanja (prolin cis/trans).'},
+  {t:'metilacijom', why:'Nije biljeg za proteasom.'}]},
  /* UPUTA II */
  {lec:'p12', two:true, text:'Odredite <b>točne</b> tvrdnje vezane uz oogenezu:', note:'Oogeneza nije posebno opisana u skripti – odgovor se izvodi iz mejoze (P12): prije mejoze kromosomi su nakon S faze dvokromatidni; nakon MI 23 dvokromatidna; nakon MII 23 jednokromatidna; rekombinacija završava u pahitenu, a u dijakinezi je terminalizacija kijazmi.', opts:[
   {t:'primarna oocita ima diploidan broj jednokromatidnih kromosoma', why:'Netočno – nakon S faze (prije mejoze) kromosomi su dvokromatidni.'},
@@ -3284,7 +3371,15 @@ var OLD = [
   {t:'centromerna ponavljanja', why:'Netočno.'},
   {t:'telomerna ponavljanja', why:'Netočno.'},
   {t:'DNA transpozoni', ok:true, why:'Točno – transpozicija.'},
-  {t:'retrotranspozoni', ok:true, why:'Točno.'}]}
+  {t:'retrotranspozoni', ok:true, why:'Točno.'}]},
+{lec:'p18', label:true, text:'U predviđena polja unesi brojeve navedenih pojmova (translacija):',
+  terms:['mRNA','aminoacil t-RNA','peptidil t-RNA','antikodon','kodon','peptidna veza'],
+  boxes:[['A',1],['B',3],['C',2],['D',4],['E',5],['F',6]],
+  svgf:'figTrans', why:'mRNA je lanac s kodonima (5′→3′). tRNA koja nosi rastući lanac je <b>peptidil t-RNA</b>, a ona koja dolazi s jednom aminokiselinom je <b>aminoacil t-RNA</b>. Antikodon je na tRNA, kodon na mRNA; aminokiseline povezuje peptidna veza.'},
+ {lec:'p15', label:true, text:'U predviđena polja unesite brojeve navedenih pojmova (replikacijska rašlja; zadatak nosi 2 boda):',
+  terms:['topoizomeraze I i II','DNA helikaza','usporeni lanac s Okazakijevim fragmentima','DNA polimeraza (obilježite na oba lanca)','DNA ligaza','početnica','vodeći lanac','DNA primaza','proteini koji se vežu za jednolančanu DNA'],
+  boxes:[['A',1],['B',2],['C',9],['D',8],['E',6],['F',4],['G',5],['H',3],['I',4],['J',7]],
+  svgf:'figFork', why:'Topoizomeraza je ispred rašlje (torzijalni stres), helikaza razdvaja lance, SSB drže jednolančani kalup. Na zaostajućem (usporenom) lancu primaza stavlja početnicu, polimeraza gradi Okazakijev fragment, ligaza spaja fragmente. Vodeći lanac raste kontinuirano prema rašlji – polimeraza je na OBA lanca.'}
 ];
 
 /* ================= RUTER ================= */
